@@ -1,0 +1,78 @@
+{%  extends 'admin_layout.twig' %}
+
+{% block content %}
+    {% embed "admin/templates/sidebar.twig" %}{% endembed %}
+    <div class="main-content" id="panel">
+        {% embed "admin/templates/header_nav.twig" %}{% endembed %}
+
+        <div class="container-fluid pt-6">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="card border-0 shadow-sm mb-3">
+                        <div class="card-header bg-transparent">
+                            <h6 class="text-uppercase text-muted ls-1 mb-0">
+                                voters
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <table class="table" id="example"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            let table = $('#example').DataTable({
+                stateSave: true,
+                buttons: {
+                    buttons: [
+                        { extend: 'copy', className: 'bg-primary border-primary text-white' },
+                        { extend: 'csv', className: 'bg-primary border-primary text-white' },
+                        { extend: 'excel', className: 'bg-primary border-primary text-white' },
+                        { extend: 'pdf', className: 'bg-primary border-primary text-white' },
+                        { extend: 'print', className: 'bg-primary border-primary text-white' },
+                    ]
+                },
+                dom: '<"clear">lfrtipB',
+                "processing": true,
+                "ajax": {
+                    "url": "{{ url('admin/voters') }}",
+                    "type": "POST",
+                    'data': {
+                        _token: '{{ csrf_token }}'
+                    },
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer {{ constant("api_key") }}');
+                    },
+                    complete: function(data) {
+                        console.log(data);
+                    }
+                },
+                columns: [
+                    { title: "Name" },
+                    { title: "Votes" },
+                    { title: "Ip Address" },
+                    { title: "Last Vote" },
+                ],
+                "autoWidth": false,
+                'language' : {
+                    "paginate": {
+                        "first":      "<i class='fal fa-angle-double-left'></i>",
+                        "last":       "<i class='fal fa-angle-double-right'></i>",
+                        "next":       "<i class='fal fa-angle-right'></i>",
+                        "previous":   "<i class='fal fa-angle-left'></i>"
+                    }
+                }
+            });
+
+            table
+                .buttons()
+                .container()
+                .appendTo( '#controlPanel' );
+
+        });
+    </script>
+{% endblock %}

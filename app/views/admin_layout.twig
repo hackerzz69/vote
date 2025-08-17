@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    {% block head %}
+        <title>Dashboard | {{  constant('site_title') }}</title>
+    {% endblock %}
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" type="text/css" href="{{ stylesheet('bootstrap.min.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ stylesheet('argon-dashboard.min.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ stylesheet('custom.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ stylesheet('all.min.css') }}" />
+
+    {%  if constant("dark_mode") %}
+        <link rel="stylesheet" type="text/css" href="{{ stylesheet('bootstrap.dark.css') }}" />
+    {% endif %}
+
+    <script type="text/javascript" src="{{ javascript('jquery-3.3.1.min.js') }}"></script>
+    <script type="text/javascript" src="{{ javascript('custom.js') }}"></script>
+    <script type="text/javascript" src="{{ javascript('bootstrap.bundle.min.js') }}"></script>
+    <script type="text/javascript" src="{{ javascript('chart.min.js') }}"></script>
+    <script type="text/javascript" src="{{ javascript('chart.extension.js') }}"></script>
+
+    <link rel="stylesheet" type="text/css" href="{{ url('public/vendor/datatables/datatables.min.css') }}"/>
+</head>
+<body class="">
+
+{% block content %}
+{% endblock %}
+
+<script type="text/javascript" src="{{ javascript('argon.min.js') }}"></script>
+<script type="text/javascript" src="{{ javascript('argon-dashboard.min.js') }}"></script>
+
+<script type="text/javascript" src="{{ url('public/vendor/datatables/datatables.min.js') }}"></script>
+</body>
+</html>

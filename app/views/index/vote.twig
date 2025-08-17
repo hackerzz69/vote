@@ -1,0 +1,59 @@
+{%  extends 'layout.twig' %}
+
+{% block content %}
+{% embed "index/navbar.twig" %}
+    
+{% endembed %}
+
+    <div class="container" style="margin-top:-80px;">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h3>Vote for <span class="text-primary">{{  constant('site_title') }}</span></h3>
+                        <p>
+                            Vote here for rewards within our server. To redeem votes, use the command ::claimvote.
+                            Each vote is 1 reward. Each vote helps our server reach the top of each toplist, giving
+                            us more visibility and inevitably more players.
+                        </p>
+
+                        {%  if error is defined %}
+                            <div class="alert alert-danger">
+                                {{ error }}
+                            </div>
+                        {% endif %}
+
+                        <p>
+                            Voting as: 
+                            <strong class="text-primary">
+                            {{ vote_user|capitalize }}
+                            </strong>
+                        </p>
+
+                        <hr>
+                        
+                        <div id="buttons">Loading...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let buttons = $('#buttons');
+
+        setTimeout(function() {
+            $.post('{{ url('buttons') }}', function(data) {
+                buttons.html(data);
+            });
+
+            setInterval(function() {
+                $.post('{{ url('buttons') }}', function(data) {
+                    buttons.html(data);
+                });
+            }, 15000);
+
+        }, 1000);
+
+    </script>
+{%  endblock %}

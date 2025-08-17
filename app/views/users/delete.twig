@@ -1,0 +1,38 @@
+{%  extends 'admin_layout.twig' %}
+
+{% block content %}
+    {% embed "admin/templates/sidebar.twig" %}{% endembed %}
+    <div class="main-content" id="panel">
+        {% embed "admin/templates/header_nav.twig" %}{% endembed %}
+
+        <div class="container-fluid pt-6">
+            <div class="row">
+                <div class="col-xl-12">
+                    {%  if error is defined %}
+                        <div class="alert alert-danger">
+                            {{ error }}
+                        </div>
+                    {% endif %}
+
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-transparent">
+                            <h6 class="text-uppercase text-muted ls-1 mb-1">Delete: {{ user['username'] }}</h6>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="mb-0">Are you sure?</h3>
+                            <p>Deleting this user will remove it permanently. This action can not be reversed.</p>
+
+                            <form action="{{ url('admin/users/delete/'~user['id']) }}" method="post">
+                                <div class="form-group mb-0">
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                    <a href="{{ url('admin/users') }}" class="text-muted">Cancel</a>
+                                </div>
+                                <input type="hidden" name="_token" value="{{ csrf_token }}">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

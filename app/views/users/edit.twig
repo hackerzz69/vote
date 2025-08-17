@@ -1,0 +1,138 @@
+{%  extends 'admin_layout.twig' %}
+
+{% block content %}
+    {% embed "admin/templates/sidebar.twig" %}{% endembed %}
+    <div class="main-content" id="panel">
+        {% embed "admin/templates/header_nav.twig" %}{% endembed %}
+
+        <div class="container-fluid pt-6">
+            <div class="row">
+                <div class="col-xl-12">
+
+                    {% embed "global/alerts.twig" %}{% endembed %}
+
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-transparent">
+                            <h6 class="text-uppercase text-muted ls-1 mb-1">Edit User access</h6>
+                        </div>
+
+                        <div class="card-body">
+                            <form action="{{ url('admin/users/edit/'~user['id']) }}" method="post" id="postForm">
+                                <div class="form-group">
+                                    <label for="username">Username</label>
+                                    <input type="text" name="username" class="form-control" id="username" value="{{ user['username'] }}">
+                                </div>
+                                <div class="form-group">
+                                    <div class="form-row mb-2">
+                                        <div class="col-8">
+                                            <label for="password">Password</label>
+                                            <input type="text" name="password" class="form-control" id="password">
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="mb-2">&nbsp;</div>
+                                            <button id="generate" type="button" class="btn btn-primary  btn-block">
+                                                Generate
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {% for key, values in scopes %}
+                                    <div class="form-group ml-2">
+                                        <h6 class="text-uppercase text-muted ls-1 mb-1">{{ key }}</h6>
+                                        <div class="form-row">
+                                            {% for scope in values|array_chunk(3) %}
+                                                <div class="col-2">
+                                                    {% for sc in scope %}
+                                                        {% set selected = '' %}
+
+                                                        {% if user_scopes[key]  %}
+                                                            {% set actions = user_scopes[key] %}
+                                                                {% if in_array(sc, actions) %}
+                                                                {% set selected = 'checked' %}
+                                                                {% endif %}
+                                                        {% endif %}
+
+                                                        <div class="custom-control custom-switch ml-1">
+                                                            <input type="checkbox" class="custom-control-input rounded-pill ml-2"
+                                                                   id="switch-{{ key }}-{{ sc }}"
+                                                                   data-controller="{{ key }}"
+                                                                   data-action="{{ sc }}" {{ selected }}>
+                                                            <label class="custom-control-label" for="switch-{{ key }}-{{ sc }}">{{ sc }}</label>
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                            {%  endfor %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+
+                                <input type="hidden" name="access_list" value="{{ user_scopes|json_encode }}" id="access_list">
+                                <input type="hidden" name="_token" value="{{ csrf_token }}">
+
+                                <div class="form-group mb-0">
+                                    <button type="submit" class="btn btn-success">
+                                        Save User
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let scopes = JSON.parse('{{ user_scopes|json_encode|raw }}');
+
+        $("input[id^='switch-']").each(function(index) {
+            let btn = $(this);
+
+            btn.on("click", function(event) {
+                let controller = $(this).data("controller");
+                let action     = $(this).data("action");
+
+                if (!scopes[controller]) {
+                    scopes[controller] = [];
+                }
+
+                let inArr = jQuery.inArray(action, scopes[controller]);
+
+                if (inArr === -1) {
+                    scopes[controller].push(action);
+                } else {
+                    scopes[controller].splice(scopes[controller].indexOf(action), 1);
+
+                    if (scopes[controller].length === 0) {
+                        delete scopes[controller];
+                    }
+                }
+
+                $('#access_list').val(JSON.stringify(scopes));
+            });
+        });
+
+        document.getElementById("generate").addEventListener("click", function(e) {
+            e.preventDefault();
+            let field = document.getElementById("password");
+            field.value = generate();
+        });
+
+        function generate() {
+            let result           = '';
+            let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&';
+            let charactersLength = characters.length;
+            let random_length    = randomInt(8, 25);
+
+            for (let i = 0; i < random_length; i++ ) {
+                result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+            return result;
+        }
+
+        function randomInt(min, max) { // min and max included
+            return Math.floor(Math.random() * (max - min + 1) + min);
+        }
+    </script>
+{% endblock %}

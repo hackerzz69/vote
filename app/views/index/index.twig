@@ -1,0 +1,42 @@
+{%  extends 'layout.twig' %}
+
+{% block content %}
+{% embed "index/navbar.twig" %}
+    
+{% endembed %}
+
+<div class="container" style="margin-top:-80px;">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h3>Vote for <span class="text-primary">{{  constant('site_title') }}</span></h3>
+                    <p>
+                        Vote here for rewards within our server. To redeem votes, use the command ::claimvote.
+                        Each vote is 1 reward. Each vote helps our server reach the top of each toplist, giving
+                        us more visibility and inevitably more players.
+                    </p>
+
+                    {%  if error is defined %}
+                        <div class="alert alert-danger">
+                            {{ error }}
+                        </div>
+                    {% endif %}
+
+                    <p>To begin, enter your Username below:</p>
+
+                    <form method="POST" action="{{ url('') }}" class="form-inline">
+                        <div class="form-group mr-2">
+                            <input class="form-control" name="username" id="username" placeholder="Username">
+                        </div>
+                        <input type="hidden" name="_token" value="{{ csrf_token }}">
+                        <div class="form-group">
+                            <input type="submit" value="Continue" class="btn btn-primary">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{%  endblock %}

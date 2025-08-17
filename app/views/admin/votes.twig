@@ -1,0 +1,67 @@
+{%  extends 'admin_layout.twig' %}
+
+{% block content %}
+    {% embed "admin/templates/sidebar.twig" %}{% endembed %}
+    <div class="main-content" id="panel">
+        {% embed "admin/templates/header_nav.twig" %}{% endembed %}
+
+        <div class="container-fluid pt-6">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="card border-0 shadow-sm mb-3">
+                        <div class="card-header bg-transparent">
+                            <h6 class="text-uppercase text-muted ls-1 mb-0">
+                                Votes
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <table class="table" id="example"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            let table = $('#example').DataTable({
+                stateSave: true,
+                "processing": true,
+                "ajax": {
+                    "url": "{{ url('admin/votes') }}",
+                    "type": "POST",
+                    'data': {
+                        _token: '{{ csrf_token }}'
+                    },
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer {{ constant("api_key") }}');
+                    }
+                },
+                columns: [
+                    { title: "Username" },
+                    { title: "Ip Address" },
+                    { title: "Site" },
+                    { title: "Started On" },
+                    { title: "Completed" },
+                    { title: "Claimed" },
+                ],
+                "autoWidth": false,
+                'language' : {
+                    "paginate": {
+                        "first":      "<i class='fal fa-angle-double-left'></i>",
+                        "last":       "<i class='fal fa-angle-double-right'></i>",
+                        "next":       "<i class='fal fa-angle-right'></i>",
+                        "previous":   "<i class='fal fa-angle-left'></i>"
+                    }
+                }
+            });
+
+            table
+                .buttons()
+                .container()
+                .appendTo( '#controlPanel' );
+
+        });
+    </script>
+{% endblock %}

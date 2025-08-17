@@ -1,0 +1,9 @@
+@font-face { font-family: "Muli-Light"; src: url('../fonts/muli.light.ttf'); }
+
+
+body {
+	background-color: #1D202E;
+	background-repeat: no-repeat;
+	background-position: top center;
+	background-size: cover;
+}

@@ -1,0 +1,148 @@
+{% block admin_sidebar %}
+    <nav class="navbar navbar-main navbar-vertical fixed-left navbar-expand-md navbar-{{ constant("dark_mode") == 1? 'dark' : 'light' }} shadow-sm" id="sidenav-main">
+        <div class="container-fluid">
+            <!-- Toggler -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#sidenav-collapse-main" aria-controls="sidenav-main" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <!-- Brand -->
+            <a class="navbar-brand pt-0" href="{{ url('admin') }}">
+                NexusVote
+            </a>
+            <!-- User -->
+            <ul class="nav align-items-center d-md-none">
+                <li class="nav-item dropdown">
+                    <i class="fas fa-user-circle"></i> {{ username|capitalize }}
+                </li>
+            </ul>
+            
+            <!-- Collapse -->
+            <div class="collapse navbar-collapse" id="sidenav-collapse-main">
+                <!-- Collapse header -->
+                <div class="navbar-collapse-header d-md-none">
+                    <div class="row">
+                        <div class="col-6 collapse-brand">
+                            <a href="{{ url('admin') }}">
+                                Dashboard
+                            </a>
+                        </div>
+                        <div class="col-6 collapse-close">
+                            <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#sidenav-collapse-main" aria-controls="sidenav-main" aria-expanded="false" aria-label="Toggle sidenav">
+                                <span></span>
+                                <span></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class=" nav-link {{ controller == "admin" and action =='index' ? "active" : "" }}"
+                           href="{{ url('admin') }}">
+                            <i class="fal fa-desktop text-primary fa-fw"></i>
+                            Dashboard
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class=" nav-link {{ controller == "api" and action =='index' ? "active" : "" }}"
+                           href="{{ url('admin/api') }}">
+                            <i class="fal fa-code text-primary fa-fw"></i>
+                            API
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class=" nav-link {{ action == "voters" ? "active" : "" }}" href="{{ url('admin/voters') }}">
+                            <i class="fal fa-users text-primary fa-fw"></i>
+                            Voters List
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class=" nav-link {{ action == "votes" ? "active" : "" }}" href="{{ url('admin/votes') }}">
+                            <i class="fal fa-vote-yea text-primary fa-fw"></i>
+                            Votes
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {{ controller == 'links' ? 'active' : ''}}" href="#links-nav"
+                           data-toggle="collapse" role="button"
+                           aria-expanded="{{ controller == 'links' ? 'true' : 'false'}}" aria-controls="links-nav">
+                            <i class="fal fa-link text-primary fa-fw"></i>
+                            <span class="nav-link-text">Vote Links</span>
+                        </a>
+                        <div class="collapse {{ controller == 'links' ? 'show' : ''}}" id="links-nav">
+                            <ul class="nav nav-sm flex-column">
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/links') }}"
+                                       class="nav-link {{ controller == 'links' and action == 'index' ? 'active' : ''}}">
+                                        Links
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/links/add') }}"
+                                       class="nav-link {{ controller == 'links' and action == 'add' ? 'active' : ''}}">
+                                        Add Link
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {{ controller == 'users' ? 'active' : ''}}" href="#users-nav"
+                           data-toggle="collapse" role="button"
+                           aria-expanded="{{ controller == 'users' ? 'true' : 'false'}}" aria-controls="users-nav">
+                            <i class="fal fa-user text-primary fa-fw"></i>
+                            <span class="nav-link-text">User Access</span>
+                        </a>
+                        <div class="collapse {{ controller == 'users' ? 'show' : ''}}" id="users-nav">
+                            <ul class="nav nav-sm flex-column">
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/users') }}"
+                                       class="nav-link {{ controller == 'users' and action == 'index' ? 'active' : ''}}">
+                                        Users
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/users/add') }}"
+                                       class="nav-link {{ controller == 'users' and action == 'add' ? 'active' : ''}}">
+                                        Add User
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class=" nav-link {{ action == "mfa" ? "active" : "" }}" href="{{ url('admin/mfa') }}">
+                            <i class="fal fa-lock text-primary fa-fw"></i>
+                            Security
+                        </a>
+                    </li>
+                </ul>
+
+                <hr class="my-3">
+
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class=" nav-link" href="{{ url('') }}">
+                            <i class="fal fa-home text-primary fa-fw"></i>
+                            Vote Home
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item active">
+                        <a class="nav-link text-danger" href="{{ url('admin?signout') }}">
+                            <i class="fal fa-sign-out text-danger fa-fw"></i>
+                            Sign Out</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+{% endblock %}

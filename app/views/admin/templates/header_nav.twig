@@ -1,0 +1,18 @@
+{% block header_nav %}
+    <nav class="navbar navbar-top navbar-expand-md navbar-dark bg-gradient-primary" id="navbar-main">
+        <div class="container-fluid">
+            <!-- Brand -->
+            <a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="{{ url('admin') }}">
+                {{ controller }} / {{ action }}
+            </a>
+
+            <ul class="navbar-nav align-items-center d-none d-md-flex">
+                <li class="nav-item dropdown">
+                    <span class="mb-0 text-sm font-weight-bold text-white">
+                        <i class="fas fa-user-circle"></i> {{ username|capitalize }}
+                    </span>
+                </li>
+            </ul>
+        </div>
+    </nav>
+{% endblock %}

@@ -1,0 +1,17 @@
+{%  for site in sites %}
+    {%  if site['time_left'] is defined %}
+
+        <a href="{{ url('vote/'~site.id) }}" target="_blank" class="btn btn-success disabled">
+            {{ site.title }}<br>
+            <small>{{  site.time_left }}</small>
+        </a>
+
+    {% else %}
+        <a href="{{ url('vote/'~site.id) }}" target="_blank" class="btn btn-primary text-white">
+            {{ site.title }}
+            <br>
+            <small>Ready</small>
+        </a>
+    {% endif %}
+
+{%  endfor %}

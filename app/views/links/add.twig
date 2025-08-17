@@ -1,0 +1,63 @@
+{%  extends 'admin_layout.twig' %}
+
+{% block content %}
+    {% embed "admin/templates/sidebar.twig" %}{% endembed %}
+    <div class="main-content" id="panel">
+        {% embed "admin/templates/header_nav.twig" %}{% endembed %}
+
+        <div class="container-fluid pt-6">
+            <div class="row">
+                <div class="col-xl-12">
+                    {%  if error is defined %}
+                        <div class="alert alert-danger">
+                            {{ error }}
+                        </div>
+                    {% endif %}
+
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-transparent">
+                            <h6 class="text-uppercase text-muted ls-1 mb-1">Add Link</h6>
+                        </div>
+                        <div class="card-body">
+                            <form action="{{ url('admin/links/add') }}" method="post">
+                                <div class="form-group">
+                                    <label for="title" class="text-uppercase text-muted mb-1 small">
+                                        Title
+                                    </label>
+                                    <input class="form-control" name="title" id="title">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="url" class="text-uppercase text-muted mb-1 small">
+                                        URL
+                                    </label>
+
+                                    <input class="form-control" name="url" id="url">
+
+                                    <p class="small text-muted">
+                                        <strong>{sid}</strong> and <strong>{incentive}</strong> will be auto-replaced
+                                        by the script with the site id below, and a random string respectively.
+                                    </p>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="site_id" class="text-uppercase text-muted mb-1 small">
+                                        Site ID
+                                    </label>
+                                    <input class="form-control" name="site_id" id="site_id">
+                                </div>
+
+                                <input type="hidden" name="_token" value="{{ csrf_token }}">
+
+                                <div class="form-group mb-0">
+                                    <button type="submit" class="btn btn-success">Save Changes</button>
+                                    <a href="{{ url('admin/links') }}">Cancel</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

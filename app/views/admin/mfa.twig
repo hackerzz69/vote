@@ -1,0 +1,66 @@
+{%  extends 'admin_layout.twig' %}
+
+{% block content %}
+    {% embed "admin/templates/sidebar.twig" %}{% endembed %}
+    <div class="main-content" id="panel">
+        {% embed "admin/templates/header_nav.twig" %}{% endembed %}
+
+        <div class="container-fluid pt-6">
+            <div class="row">
+                <div class="col-xl-12">
+                    {% embed "global/alerts.twig" %}{% endembed %}
+
+                    <div class="card border-0 shadow-sm mb-3">
+                        <div class="card-header bg-transparent">
+                            <h6 class="text-uppercase text-muted ls-1 mb-0">
+                                security
+                            </h6>
+                            <h3 class="mb-0">Two-Factor Authentication</h3>
+                        </div>
+                        <div class="card-body">
+                            {% if auth_secret is defined %}
+                            <div class="d-flex">
+                                <div class="flex-fill pr-3">
+                                    <img src="{{ qr_code }}" alt="qr code">
+                                </div>
+                                <div class="flex-fill w-100">
+                                    <p>Secure your account using two-factor authentication. This will add an extra layer of security
+                                        to your account. This is recommended for all staff members.</p>
+
+                                    <p>Enter this code into your authenticator app, or scan the QRCode.</p>
+
+                                    <p>Code: <code>{{  auth_secret }}</code></p>
+
+                                    <hr>
+                                    <p>Enter the 6 digit code provided by your app:</p>
+
+                                    <form action="{{ url('admin/mfa') }}" method="post" class="form-inline">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control mr-2" placeholder="Code" name="code">
+                                        </div>
+                                        <input type="hidden" name="secret" value="{{ auth_secret }}">
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            {% else %}
+                            <p>
+                                <i class="fal fa-check text-success fa-fw"></i> 
+                                You currently have Two-Factor enabled.
+                            </p>
+
+                            <a href="{{ url('admin/mfa?remove') }}" class="btn btn-outline-danger">
+                                Remove
+                            </a>
+                            
+                            {% endif %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

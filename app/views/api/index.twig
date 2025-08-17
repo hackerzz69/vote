@@ -1,0 +1,226 @@
+{%  extends 'admin_layout.twig' %}
+
+{% block content %}
+    {% embed "admin/templates/sidebar.twig" %}{% endembed %}
+    <div class="main-content" id="panel">
+        {% embed "admin/templates/header_nav.twig" %}{% endembed %}
+
+        <div class="container-fluid pt-6">
+            <div class="row">
+                <div class="col-xl-12">
+                    {% embed "global/alerts.twig" %}{% endembed %}
+
+                    <div class="card border-0 shadow-sm mb-3">
+                        <div class="card-body">
+                            <h6 class="text-uppercase text-muted ls-1 mb-0">
+                                Base Url
+                            </h6>
+                            <code>{{ base_url }}</code>
+
+                            <hr>
+
+                            <p>To access this API in your application, you need to send a Authorization
+                            header containing your api key.</p>
+
+                            <pre class="bg-dark p-3">"Authorization: Bearer {{ constant('api_key') }}"</pre>
+                        
+                            <p class="mb-0 small text-muted">
+                                The API key can be changed in app/constants.php
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="card border-0 shadow-sm mb-3">
+                        <div class="card-body">
+                            <h6 class="text-uppercase text-muted ls-1 mb-0">
+                                Endpoint
+                            </h6>
+                            <p>
+                            <span class="badge badge-success text-white">GET</span>
+                            <code>/users</code>
+                            </p>
+
+                            <p>
+                                Retrieves a json array of unique users.
+                                Response will contain multiple elements and needs to be looped.
+                            </p>
+
+                            <hr>
+
+                            <h6 class="text-uppercase text-muted ls-1">
+                                Response data
+                            </h6>
+                            <table class="table">
+                                <thead class="bg-dark">
+                                <tr>
+                                    <th>Variable</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tr>
+                                    <td>username</td>
+                                    <td>string</td>
+                                    <td>The name of the player</td>
+                                </tr>
+                                <tr>
+                                    <td>ip_address</td>
+                                    <td>string</td>
+                                    <td>The last ip used for the player</td>
+                                </tr>
+                                <tr>
+                                    <td>last_vote</td>
+                                    <td>int</td>
+                                    <td>the time in seconds when the last vote took place</td>
+                                </tr>
+                                <tr>
+                                    <td>pending</td>
+                                    <td>int</td>
+                                    <td>number of votes not claimed</td>
+                                </tr>
+                                <tr>
+                                    <td>total_votes</td>
+                                    <td>int</td>
+                                    <td>total number of votes</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card border-0 shadow-sm mb-3">
+                        <div class="card-body">
+                            <h6 class="text-uppercase text-muted ls-1 mb-0">
+                                Endpoint
+                            </h6>
+                            <p>
+                            <span class="badge badge-success text-white">GET</span>
+                            <code>/users/name</code></p>
+
+                            <p>Retrieves a single json array with data on given user. Does not need looped.</p>
+
+                            <hr>
+
+                            <h6 class="text-uppercase text-muted ls-1">
+                                Response data
+                            </h6>
+
+                            <table class="table">
+                                <thead class="bg-dark">
+                                <tr>
+                                    <th>Variable</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tr>
+                                    <td>username</td>
+                                    <td>string</td>
+                                    <td>The name of the player</td>
+                                </tr>
+                                <tr>
+                                    <td>ip_address</td>
+                                    <td>string</td>
+                                    <td>The last ip used for the player</td>
+                                </tr>
+                                <tr>
+                                    <td>last_vote</td>
+                                    <td>int</td>
+                                    <td>the time in seconds when the last vote took place</td>
+                                </tr>
+                                <tr>
+                                    <td>pending</td>
+                                    <td>int</td>
+                                    <td>number of votes not claimed</td>
+                                </tr>
+                                <tr>
+                                    <td>completed</td>
+                                    <td>int</td>
+                                    <td>number of votes that have been claimed</td>
+                                </tr>
+                                <tr>
+                                    <td>total</td>
+                                    <td>int</td>
+                                    <td>total number of votes</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card border-0 shadow-sm mb-3">
+                        <div class="card-body">
+                            <h6 class="text-uppercase text-muted ls-1 mb-0">
+                                Endpoint
+                            </h6>
+                            <p>
+                                <span class="badge badge-success text-white">GET</span>
+                                <code>/users/name/votes</code></p>
+
+                            <p>Retrieves a json array of all that has not been claimed, and automatically sets them as claimed.
+                            Useful if you don't have Remote SQL. </p>
+
+                            <hr>
+
+                            <h6 class="text-uppercase text-muted ls-1">
+                                Response data
+                            </h6>
+
+                            <table class="table">
+                                <thead class="bg-dark">
+                                <tr>
+                                    <th>Variable</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tr>
+                                    <td>username</td>
+                                    <td>string</td>
+                                    <td>The name of the player</td>
+                                </tr>
+                                <tr>
+                                    <td>ip_address</td>
+                                    <td>string</td>
+                                    <td>The last ip used for the player</td>
+                                </tr>
+                                <tr>
+                                    <td>site_id</td>
+                                    <td>int</td>
+                                    <td>the ID of the site they voted on</td>
+                                </tr>
+                                <tr>
+                                    <td>voted_on</td>
+                                    <td>int</td>
+                                    <td>The time in seconds when the callback was received</td>
+                                </tr>
+                                <tr>
+                                    <td>claimed</td>
+                                    <td>boolean</td>
+                                    <td>0 if the vote has not been claimed. should never be 1.</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $.ajax({
+            url: "{{ url('api/users/og+kingfox/votes') }}",
+            type: 'GET',
+            data: {
+                limit: 1
+            },
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Authorization', 'Bearer {{ constant("api_key") }}');
+            },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function () {
+
+            },
+        });
+    </script>
+{% endblock %}

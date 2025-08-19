@@ -1,0 +1,25 @@
+{
+  "require": {
+    "envms/fluentpdo": "^2.2",
+    "rammewerk/router": "0.9.*",
+    "robthree/twofactorauth": "^3.0",
+    "symfony/polyfill-ctype": "^1.32",
+    "symfony/polyfill-mbstring": "^1.32",
+    "twig/twig": "^3.21",
+    "bacon/bacon-qr-code": "^3.0"
+  },
+  "config": {
+    "vendor-dir": "vendor"
+  },
+  "minimum-stability": "stable",
+  "autoload": {
+    "psr-4": {
+      "Envms\\FluentPDO\\": "vendor/envms/fluentpdo/src/",
+      "Twig\\": "vendor/twig/twig/src/",
+      "Symfony\\Polyfill\\Ctype\\": "vendor/symfony/polyfill-ctype/",
+      "Symfony\\Polyfill\\Mbstring\\": "vendor/symfony/polyfill-mbstring/",
+      "RobThree\\Auth\\": "vendor/robthree/twofactorauth/lib/",
+      "Rammewerk\\Router\\": "vendor/rammewerk/router/src/"
+    }
+  }
+}

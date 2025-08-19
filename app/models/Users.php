@@ -1,109 +1,79 @@
 <?php
 
-
 class Users extends Model {
 
     public static function getUsers() {
-        return self::getDb()->select()
-            ->columns(['*'])
+        return self::getDb()
             ->from("users")
-            ->execute();
+            ->fetchAll();
     }
 
     public static function getUser($username) {
-        return self::getDb()->select(true)
-            ->columns(['*'])
+        return self::getDb()
             ->from("users")
-            ->where(['username = :user'])
-            ->bind(['user' => $username])
-            ->execute();
+            ->where("username", $username)
+            ->fetch();
     }
 
     public static function getUserById($id) {
-        return self::getDb()->select(true)
-            ->columns(['*'])
+        return self::getDb()
             ->from("users")
-            ->where(['id = :id'])
-            ->bind(['id' => $id])
-            ->execute();
+            ->where("id", $id)
+            ->fetch();
     }
 
     public static function deleteUser($id) {
-        return self::getDb()->delete()
-            ->from("users")
-            ->where(["id = :id"])
-            ->bind([':id' => $id])
+        return self::getDb()
+            ->deleteFrom("users")
+            ->where("id", $id)
             ->execute();
     }
 
     public static function createUser($username, $password, $scopes) {
-        return self::getDb()->insert()
-            ->into("users")
-            ->columns(['username', 'password', 'created', 'scopes'])
+        return self::getDb()
+            ->insertInto("users", ['username', 'password', 'created', 'scopes'])
             ->values([
-                [$username, password_hash($password, PASSWORD_BCRYPT), time(), $scopes]
+                $username,
+                password_hash($password, PASSWORD_BCRYPT),
+                time(),
+                $scopes
             ])
             ->execute();
     }
 
     public static function updateLogin($id, $ip_address) {
-        return self::getDb()->update()->table("users")
-            ->columns([
-                'last_ip' => ":last_ip",
-                'last_login' => ':last_login'
-            ])
-            ->where([
-                'id = :id'
-            ])->bind([
-                ':id'  => $id,
-                ':last_ip'  => $ip_address,
+        return self::getDb()
+            ->update("users")
+            ->set([
+                'last_ip' => $ip_address,
                 'last_login' => time()
-            ])->execute();
+            ])
+            ->where("id", $id)
+            ->execute();
     }
 
     public static function updateMfa($id, $secret) {
-        return self::getDb()->update()->table("users")
-            ->columns(['mfa_secret' => ':mfa_secret'])
-            ->where([
-                'id = :id'
-            ])->bind([
-                ':id' => $id,
-                ':mfa_secret' => $secret
-            ])->execute();
+        return self::getDb()
+            ->update("users")
+            ->set(['mfa_secret' => $secret])
+            ->where("id", $id)
+            ->execute();
     }
-
 
     public static function updateUser($id, $username, $password, $scopes) {
-        if ($password == null) {
-            return self::getDb()->update()->table("users")
-                ->columns([
-                    'username' => ":username",
-                    'scopes'   => ':scopes'
-                ])
-                ->where([
-                    'id = :id'
-                ])->bind([
-                    ':id'       => $id,
-                    ':username' => $username,
-                    ':scopes'   => $scopes
-                ])->execute();
+        $data = [
+            'username' => $username,
+            'scopes' => $scopes
+        ];
+
+        if ($password !== null) {
+            $data['password'] = password_hash($password, PASSWORD_BCRYPT);
         }
 
-        return self::getDb()->update()->table("users")
-            ->columns([
-                'username' => ":username",
-                'password' => ":password",
-                'scopes'   => ':scopes'
-            ])
-            ->where([
-                'id = :id'
-            ])->bind([
-                ':id'       => $id,
-                ':username' => $username,
-                ":password" => password_hash($password, PASSWORD_BCRYPT),
-                ':scopes'   => $scopes
-            ])->execute();
+        return self::getDb()
+            ->update("users")
+            ->set($data)
+            ->where("id", $id)
+            ->execute();
     }
-
-
 }

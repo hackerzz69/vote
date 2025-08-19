@@ -1,34 +1,36 @@
 <?php
 
-use Router\Router;
+use Rammewerk\Router\Router;
+use Rammewerk\Router\Error\InvalidRoute;
 
-class App {
-
+class App
+{
     /** @var Controller controller */
     private $controller;
     private $router;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->router = PageRouter::getInstance();
         $this->router->initRoutes();
 
         try {
-            $this->router->route();
-        } catch (\Router\RouteNotFoundException $e) {
+            $this->router->dispatch();
+        } catch (InvalidRoute $e) {
             $this->router->setRoute("errors", "show404");
         }
 
-        $controller  = $this->router->getController(true);
+        $controller = $this->router->getController(true);
 
         /** @var Controller controller */
-        $this->controller = new $controller;
+        $this->controller = new $controller();
 
         /** Redirects to 404 is method doesn't exist. */
         if (!method_exists($this->controller, $this->router->getMethod())) {
             $this->router->setRoute("errors", "show404");
 
-            $controller  = $this->router->getController(true);
-            $this->controller = new $controller;
+            $controller = $this->router->getController(true);
+            $this->controller = new $controller();
         }
 
         $this->controller->setView($this->router->getViewPath());
@@ -44,7 +46,8 @@ class App {
      * Calls the action within a controller
      * TODO: revisit later
      */
-    public function initRoute() {
+    public function initRoute()
+    {
         if (method_exists($this->controller, "beforeExecute")) {
             call_user_func_array([$this->controller, "beforeExecute"], []);
         }
@@ -53,10 +56,12 @@ class App {
 
         if ($this->controller->isJson()) {
             if ($bearer_token != api_key) {
-                $output = ['error' => 'Invalid API Key: '.$bearer_token];
+                $output = ["error" => "Invalid API Key: " . $bearer_token];
             } else {
-                $output =
-                    call_user_func_array([$this->controller, $this->router->getMethod()], $this->router->getParams());
+                $output = call_user_func_array(
+                    [$this->controller, $this->router->getMethod()],
+                    $this->router->getParams()
+                );
             }
 
             if (is_subclass_of($this->controller, "Controller")) {
@@ -65,7 +70,10 @@ class App {
             }
             return false;
         } else {
-            $output = call_user_func_array([$this->controller, $this->router->getMethod()], $this->router->getParams());
+            $output = call_user_func_array(
+                [$this->controller, $this->router->getMethod()],
+                $this->router->getParams()
+            );
 
             if ($this->controller->getActionName() == "callback") {
                 header("Content-Type: application/json; charset=UTF-8");
@@ -74,8 +82,6 @@ class App {
             }
             return true;
         }
-
-
 
         /*if (!$this->controller->isJson()) {
             if (!file_exists('app/views/'.$this->controller->getView().'.twig')) {
@@ -88,7 +94,5 @@ class App {
             return true;
         }*/
     }
-
-
 }
 ?>

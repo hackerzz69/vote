@@ -1,167 +1,199 @@
 <?php
-	$actual_link = $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
-	$parts = explode('/', $actual_link);
-	$root = $parts[1];
+include 'process.php';
 
-	include '../app/constants.php';
-	include 'process.php';
-	
+// Default to root path
+$root = '/';
+$normalizedRoot = ($root === '/') ? '/' : '/' . trim($root, '/') . '/';
+
+// Load constants if already installed
+if (file_exists('../app/constants.php')) {
+    include '../app/constants.php';
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <title>Install</title>
-	<link href="../public/css/bootstrap.min.css" rel="stylesheet">
-	<link href="../public/css/argon.min.css" rel="stylesheet">
-	<link href="../public/css/bootstrap.dark.css" rel="stylesheet">
-    <link href="../public/css/all.min.css" rel="stylesheet">
-    <link href="../public/css/custom.css" rel="stylesheet">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hackzz Installer</title>
+  <link href="../public/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../public/css/all.min.css" rel="stylesheet">
+  <link href="../public/css/custom.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #0f172a;
+      color: #e2e8f0;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .card {
+      background-color: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 0.75rem;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.05);
+    }
+    .card-header {
+      background-color: #1e40af;
+      color: #f8fafc;
+      font-weight: 600;
+      border-bottom: 1px solid #334155;
+    }
+    .form-control {
+      background-color: #0f172a;
+      color: #f8fafc;
+      border: 1px solid #475569;
+      border-radius: 0.5rem;
+    }
+    .form-control:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 0.2rem rgba(56, 189, 248, 0.25);
+    }
+    .form-floating label {
+      color: #94a3b8;
+    }
+    .btn-primary {
+      background-color: #38bdf8;
+      border: none;
+    }
+    .btn-primary:hover {
+      background-color: #0ea5e9;
+    }
+    .alert-info {
+      background-color: #1e3a8a;
+      border-color: #3b82f6;
+      color: #e0f2fe;
+    }
+    .alert-danger {
+      background-color: #1e293b;
+      border-color: #334155;
+      color: #f87171;
+    }
+    .alert-warning {
+      background-color: #334155;
+      border-color: #475569;
+      color: #facc15;
+    }
+    .form-check-input:checked {
+      background-color: #38bdf8;
+      border-color: #38bdf8;
+    }
+    .pre-box {
+      background-color: #0f172a;
+      border: 1px solid #334155;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      color: #f8fafc;
+    }
+  </style>
 </head>
 <body>
 
-    <div class="container" style="margin-top: 100px;">
-        <div class="row">
-        	<div class="col-sm-12">
-				
-				<?php if (!empty($errors)): ?>
-				<div class="alert alert-danger">
-					<p>One or more errors occured. Please correct them to proceed:</p>
-					<ul>
-						<?php foreach ($errors as $error): ?>
-						<li><?= $error ?></li>
-						<?php endforeach; ?>
-					</ul>
-				</div>
-				<?php endif; ?>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
 
-				<?php if (defined("site_title")) { ?>
-				<div class="card shadow-sm border-success">
-					<div class="card-body">
-						<h3 class="text-success">Script Installed</h3>
-						<p>Your website is configured and now ready to use. To login to the admin panel, use the credentials below.
-							You can change the name and password via the Users page. To modify more options, 
-							see <code>app/constants.php</code>.
-						</p>
+      <?php if (!empty($errors)): ?>
+      <div class="alert alert-danger mb-4">
+        <h5><i class="fas fa-exclamation-triangle me-2"></i>Installation Errors</h5>
+        <ul class="mb-0">
+          <?php foreach ($errors as $error): ?>
+          <li><?= $error ?></li>
+          <?php endforeach; ?>
+        </ul>
+      </div>
+      <?php endif; ?>
 
-						<pre style="line-height:1.2em;" class="text-left">
-Default Login Credentials
+      <?php if (!defined("site_title")): ?>
 
-Username: <span class="text-primary">King Fox</span>
-Password: <span class="text-primary">asd-123</span>
-						</pre>
+      <div class="alert alert-info mb-4">
+        <i class="fas fa-info-circle me-2"></i>
+        Please ensure <strong>all fields are filled out</strong>. Blank values may cause installation errors.
+      </div>
 
-						<p class="text-danger">
-							DELETE THE INSTALL FOLDER.
-						</p>
-
-						<p style="margin-top:20px;">
-							<a href="../" class="btn btn-success">Home</a>
-							<a href="../admin" class="btn btn-success">Admin</a>
-						</p>
-					</div>
-				</div>
-				<?php } else { ?>
-				<div class="alert alert-info">
-					Please make sure that all fields have been filled out properly before submitting the form. Incorrect data could lead to the script not functioning
-				</div>
-
-				<form action="index.php" method="post" style="margin-top: 30px;">
-					<div class="card border-0 shadow-sm mb-3">
-						<div class="card-body">
-						<h5 class="text-primary">General Options</h5>
-							<div class="form-group">
-								<div>Website Title</div>
-								<small class="grey-text">The title of your website/server. Shown in the header and in the tab.</small>
-								<input type="text" name="site_title" class="form-control" required>
-							</div>
-
-							<div class="form-group">
-								<div>Root Directory</div>
-								<small class="grey-text">
-									The path this script is located.
-								</small>
-								<input class="form-control" type="text" name="web_root" value="/<?php echo $root; ?>/">
-							</div>
-						</div>
-					</div>
-
-					<div class="card border-0 shadow-sm mb-3">
-						<div class="card-body">
-							<h5 class="text-primary">Database Setup</h5>
-							<div class="form-group">
-								<div>MySQL Host</div>
-								<small class="grey-text">
-									The database server IP. This is typically "localhost" unless your database server is hosted remotely.
-								</small>
-								<input class="form-control" type="text" name="MYSQL_HOST" value="localhost" required>
-							</div>
-
-							<div class="form-group">
-								<div>MySQL Database</div>
-								<small class="grey-text">
-									The name of the database that's going to be used.
-								</small>
-								<input class="form-control" type="text" name="MYSQL_DATABASE" required>
-							</div>
-
-							<div class="form-group">
-								<div>MySQL Username</div>
-								<small class="grey-text">
-									The username that's attached to the database you entered above.
-								</small>
-								<input class="form-control" type="text" name="MYSQL_USERNAME" required>
-							</div>
-
-							<div class="form-group">
-								<div>MySQL Password</div>
-								<small class="grey-text">
-									The passwords that's attached to the username you entered above.
-								</small>
-								<input class="form-control" type="text" name="MYSQL_PASSWORD">
-							</div>
-						</div>
-					</div>
-
-					<div class="card border-0 shadow-sm mb-3">
-						<div class="card-body">
-						<h5 class="text-primary">User Configuration</h5>
-							<div class="alert alert-primary">
-								This user is disabled by default. DO NOT use unless you absolutely have to.
-							</div>
-
-							<div class="form-group">
-								<div>Root Username</div>
-								<small class="grey-text">
-									Used for "root" access to the script. Disabled by default. 
-								</small>
-								<input class="form-control" type="text" name="admin_username">
-							</div>
-
-							<div class="form-group">
-								<div>Root Password</div>
-								<small class="grey-text">
-									Used for "root" access to the admin panel. Disabled by default.
-								</small>
-								<input class="form-control" type="text" name="admin_password">
-							</div>
-							<div class="form-group">
-								<button type="submit" class="btn btn-primary">Install</button>
-							</div>
-						</div>
-					</div>
-				</form>
-				<?php } ?>
-
-	        </div>
+      <form method="post">
+        <div class="card shadow-sm mb-4">
+          <div class="card-header"><i class="fas fa-cogs me-2"></i>General Options</div>
+          <div class="card-body">
+            <div class="form-floating mb-3">
+              <input type="text" name="site_title" class="form-control" id="site_title" required>
+              <label for="site_title">Website Title</label>
+            </div>
+            <div class="form-floating mb-3">
+              <input type="text" name="web_root" class="form-control" id="web_root" value="<?= $normalizedRoot ?>" required>
+              <label for="web_root">Root Directory</label>
+            </div>
+          </div>
         </div>
-    </div>
 
-    <script src="../public/js/jquery-3.1.1.min.js"></script>
-    <script src="../public/js/materialize.min.js"></script>
-    <script src="../public/js/custom.js"></script>
+        <div class="card shadow-sm mb-4">
+          <div class="card-header"><i class="fas fa-database me-2"></i>Database Setup</div>
+          <div class="card-body">
+            <div class="form-floating mb-3">
+              <input type="text" name="MYSQL_HOST" class="form-control" id="MYSQL_HOST" value="localhost" required>
+              <label for="MYSQL_HOST">MySQL Host</label>
+            </div>
+            <div class="form-floating mb-3">
+              <input type="text" name="MYSQL_DATABASE" class="form-control" id="MYSQL_DATABASE" required>
+              <label for="MYSQL_DATABASE">Database Name</label>
+            </div>
+            <div class="form-floating mb-3">
+              <input type="text" name="MYSQL_USERNAME" class="form-control" id="MYSQL_USERNAME" required>
+              <label for="MYSQL_USERNAME">Username</label>
+            </div>
+            <div class="form-floating mb-3">
+              <input type="password" name="MYSQL_PASSWORD" class="form-control" id="MYSQL_PASSWORD">
+              <label for="MYSQL_PASSWORD">Password</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+          <div class="card-header"><i class="fas fa-user-lock me-2"></i>User Configuration</div>
+          <div class="card-body">
+            <div class="alert alert-warning mb-3">
+              <i class="fas fa-info-circle me-2"></i>This user is disabled by default. Use only if necessary.
+            </div>
+            <div class="form-floating mb-3">
+              <input type="text" name="admin_username" class="form-control" id="admin_username">
+              <label for="admin_username">Root Username</label>
+            </div>
+            <div class="form-floating mb-3">
+              <input type="password" name="admin_password" class="form-control" id="admin_password">
+              <label for="admin_password">Root Password</label>
+            </div>
+            <div class="form-check form-switch mb-3">
+              <input class="form-check-input" type="checkbox" id="auto_delete_install" name="auto_delete_install" value="1">
+              <label class="form-check-label" for="auto_delete_install">
+                Auto-delete install folder
+              </label>
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-download me-1"></i>Install</button>
+          </div>
+        </div>
+      </form>
+
+      <?php else: ?>
+
+      <div class="card border-success shadow-sm mb-4">
+        <div class="card-header"><i class="fas fa-check-circle me-2"></i>Installation Complete</div>
+        <div class="card-body">
+          <p>Your website is now configured. Use the credentials below to log in:</p>
+          <div class="pre-box">
+Username: <span class="text-info">TestUser</span><br>
+Password: <span class="text-info">pass</span>
+          </div>
+          <p class="text-danger mt-3 fw-bold">Please delete the <code>install</code> folder immediately.</p>
+          <div class="mt-3">
+            <a href="../" class="btn btn-success me-2"><i class="fas fa-home me-1"></i>Home</a>
+            <a href="../admin" class="btn btn-success"><i class="fas fa-user-shield me-1"></i>Admin</a>
+          </div>
+        </div>
+      </div>
+
+      <?php endif; ?>
+    </div>
+  </div>
+</div>
+
+<script src="../public/js/bootstrap.bundle.min.js"></script>
 </body>
+</html>

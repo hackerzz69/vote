@@ -1,6 +1,6 @@
 <?php
 
-use Router\Router;
+use Rammewerk\Router\Router;
 
 class PageRouter extends Router {
 
@@ -8,7 +8,7 @@ class PageRouter extends Router {
 
     public static function getInstance() {
         if (!self::$instance) {
-            self::$instance = new PageRouter(web_root);
+            self::$instance = new PageRouter(null); // ✅ Pass null to match expected Closure
         }
         return self::$instance;
     }
@@ -19,106 +19,57 @@ class PageRouter extends Router {
 
     public $route_paths = [];
 
-    public function initRoutes() {
+public function initRoutes() {
+    $this->add('', fn() => $this->setRoute('index', 'index'));
+    $this->add('callback', fn() => $this->setRoute('index', 'callback'));
 
-        $this->all('', function() {
-            return $this->setRoute('index', 'index');
-        });
+    $this->add('vote/([0-9]+)', function($id) {
+        if ($_SERVER['REQUEST_METHOD'] !== 'GET') throw new Exception('Method Not Allowed');
+        return $this->setRoute('index', 'vote', ['id' => $id]);
+    });
 
-        $this->all('callback', function() {
-            return $this->setRoute('index', 'callback');
-        });
+    $this->add('buttons', function() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new Exception('Method Not Allowed');
+        return $this->setRoute('index', 'buttons');
+    });
 
-        $this->get('vote/([0-9]+)', function($id) {
-            return $this->setRoute('index', 'vote', ['id' => $id]);
-        });
+    $this->add('admin', fn() => $this->setRoute('admin', 'index'));
+    $this->add('admin/api', fn() => $this->setRoute('api', 'index'));
+    $this->add('api/users', fn() => $this->setRoute('api', 'users'));
 
-        $this->post('buttons', function() {
-            return $this->setRoute('index', 'buttons');
-        });
+    $this->add('api/users/([A-Za-z0-9 ]+)', fn($username) => $this->setRoute('api', 'users', ['username' => $username]));
+    $this->add('api/users/([A-Za-z0-9 ]+)/votes', fn($username) => $this->setRoute('api', 'votes', ['username' => $username]));
 
-        $this->all('admin', function() {
-            return $this->setRoute('admin', 'index');
-        });
+    $this->add('admin/login', fn() => $this->setRoute('login', 'index'));
+    $this->add('admin/login/authenticate', fn() => $this->setRoute('login', 'authenticate'));
+    $this->add('admin/mfa', fn() => $this->setRoute('admin', 'mfa'));
 
-        $this->all('admin/api', function() {
-            return $this->setRoute('api', 'index');
-        });
+    $this->add('admin/links', function() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'GET') throw new Exception('Method Not Allowed');
+        return $this->setRoute('links', 'index');
+    });
 
-        $this->all('api/users', function() {
-            return $this->setRoute('api', 'users');
-        });
+    $this->add('admin/links/add', fn() => $this->setRoute('links', 'add'));
+    $this->add('admin/links/edit/([0-9]+)', fn($id) => $this->setRoute('links', 'edit', ['id' => $id]));
+    $this->add('admin/links/delete/([0-9]+)', fn($id) => $this->setRoute('links', 'delete', ['id' => $id]));
 
-        $this->all('api/users/([A-Za-z0-9 ]+)', function($username) {
-            return $this->setRoute('api', 'users', ['username' => $username]);
-        });
+    $this->add('admin/links/toggle/([0-9]+)', function($id) {
+        if ($_SERVER['REQUEST_METHOD'] !== 'GET') throw new Exception('Method Not Allowed');
+        return $this->setRoute('links', 'toggle', ['id' => $id]);
+    });
 
-        $this->all('api/users/([A-Za-z0-9 ]+)/votes', function($username) {
-            return $this->setRoute('api', 'votes', ['username' => $username]);
-        });
-
-        $this->all('admin/login', function() {
-            return $this->setRoute('login', 'index');
-        });
-        
-        $this->all('admin/login/authenticate', function() {
-            return $this->setRoute('login', 'authenticate');
-        });
-
-        $this->all('admin/mfa', function() {
-            return $this->setRoute('admin', 'mfa');
-        });
-
-        $this->get('admin/links', function() {
-            return $this->setRoute('links', 'index');
-        });
-
-        $this->all('admin/links/add', function() {
-            return $this->setRoute('links', 'add');
-        });
-
-        $this->all('admin/links/edit/([0-9]+)', function($id)  {
-            return $this->setRoute('links', 'edit', ['id' => $id]);
-        });
-
-        $this->all('admin/links/delete/([0-9]+)', function($id)  {
-            return $this->setRoute('links', 'delete', ['id' => $id]);
-        });
-
-        $this->get('admin/links/toggle/([0-9]+)', function($id) {
-            return $this->setRoute('links', 'toggle', ['id' => $id]);
-        });
-
-        $this->all('admin/voters', function() {
-            return $this->setRoute('admin', 'voters');
-        });
-
-        $this->all('admin/votes', function() {
-            return $this->setRoute('admin', 'votes');
-        });
-
-        $this->all('admin/users', function() {
-            return $this->setRoute('users', 'index');
-        });
-
-        $this->all('admin/users/add', function() {
-            return $this->setRoute('users', 'add');
-        });
-
-        $this->all('admin/users/edit/([0-9]+)', function($id) {
-            return $this->setRoute('users', 'edit',  ['id' => $id]);
-        });
-
-        $this->all('admin/users/delete/([0-9]+)', function($id) {
-            return $this->setRoute('users', 'delete', ['id' => $id]);
-        });
-    }
+    $this->add('admin/voters', fn() => $this->setRoute('admin', 'voters'));
+    $this->add('admin/votes', fn() => $this->setRoute('admin', 'votes'));
+    $this->add('admin/users', fn() => $this->setRoute('users', 'index'));
+    $this->add('admin/users/add', fn() => $this->setRoute('users', 'add'));
+    $this->add('admin/users/edit/([0-9]+)', fn($id) => $this->setRoute('users', 'edit', ['id' => $id]));
+    $this->add('admin/users/delete/([0-9]+)', fn($id) => $this->setRoute('users', 'delete', ['id' => $id]));
+}
 
     public function setRoute($controller, $method, $params = []) {
         $this->controller = $controller;
         $this->method = $method;
         $this->params = $params;
-
         return [$controller, $method, $params];
     }
 
@@ -139,13 +90,11 @@ class PageRouter extends Router {
     }
 
     public function isSecure() {
-        return
-          (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-            || $_SERVER['SERVER_PORT'] == 443;
+        return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443;
     }
 
     public function getUrl() {
-        $baseUrl =  'http'.($this->isSecure() ? 's' : '').'://' . $_SERVER['HTTP_HOST'];
-        return $baseUrl.web_root;
+        $baseUrl = 'http' . ($this->isSecure() ? 's' : '') . '://' . $_SERVER['HTTP_HOST'];
+        return $baseUrl . web_root;
     }
 }

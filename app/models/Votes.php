@@ -1,281 +1,179 @@
 <?php
 
-use lukafurlan\database\connector\MySQLConnector;
-
 class Votes extends Model {
 
-    /**
-     * @param $days integer
-     * @return array
-     */
     public static function getVoteData($days) {
-        $start  = strtotime(date('Y-m-d H:i:s')." - $days DAYS");
-        $end    = strtotime(date('Y-m-d H:i:s'));
+        $start = strtotime("-$days days");
+        $end = time();
 
-        $votes = self::getDb()->select()
-            ->columns(['*'])
+        $votes = self::getDb()
             ->from("votes")
             ->where([
-                'voted_on != -1',
-                'voted_on > :start',
-                'voted_on < :end'
-            ])->bind([
-                ':start' => $start,
-                ':end' => $end
-            ])->execute();
+                "voted_on != ?" => -1,
+                "voted_on > ?" => $start,
+                "voted_on < ?" => $end
+            ])
+            ->fetchAll();
 
-        $days = Functions::getLastNDays($days, 'n j');
-        $data = array_fill_keys($days, 0);
-
-        $total = 0;
+        $labels = Functions::getLastNDays($days, 'n j');
+        $data = array_fill_keys($labels, 0);
 
         foreach ($votes as $vote) {
             $day = date("n j", $vote['voted_on']);
-
-            if (!isset($data[$day])) {
-                continue;
+            if (isset($data[$day])) {
+                $data[$day]++;
             }
-
-            $data[$day] += 1;
-            $total += 1;
         }
 
         return $data;
     }
 
-    /**
-     * @return array|bool|mixed
-     */
     public static function getTotals() {
-        $result = self::getDb()->select(true)
-            ->columns([
+        return self::getDb()
+            ->from("votes")
+            ->select([
                 "COUNT(DISTINCT username) AS u_total",
                 "COUNT(*) AS total",
-                "(SELECT COUNT(*) FROM votes v WHERE v.claimed = 1) AS claimed",
-                "(SELECT COUNT(*) FROM votes v WHERE v.claimed = 0) AS pending",
+                "(SELECT COUNT(*) FROM votes WHERE claimed = 1) AS claimed",
+                "(SELECT COUNT(*) FROM votes WHERE claimed = 0) AS pending"
             ])
-            ->from("votes")
-            ->execute();
-        return $result;
+            ->fetch();
     }
 
-    /**
-     * @return array|bool|mixed
-     */
     public static function getUniqueUsers() {
-        $result = self::getDb()->select(true)
-            ->columns(["COUNT(DISTINCT username) AS total"])
+        return self::getDb()
             ->from("votes")
-            ->execute();
-        return $result;
+            ->select(["COUNT(DISTINCT username) AS total"])
+            ->fetch();
     }
 
-    /**
-     * @return array|bool|mixed
-     */
     public static function getVotes() {
-        $result = self::getDb()->select()
-            ->columns(["*"])
+        return self::getDb()
             ->from("votes")
-            ->order('voted_on DESC')
-            ->execute();
-        return $result;
+            ->orderBy("voted_on DESC")
+            ->fetchAll();
     }
 
-    /**
-     * @param $username
-     * @return array|bool|mixed
-     */
     public static function getActiveVote($username) {
-        $result = self::getDb()->select(true)
-            ->columns(["*"])
+        return self::getDb()
             ->from("votes")
             ->where([
-                "voted_on = -1",
-                "username = :username",
-                ":time - voted_on < 43200"
+                "voted_on = ?" => -1,
+                "username = ?" => $username,
+                "(? - voted_on) < ?" => [time(), 43200]
             ])
-            ->bind([
-                ":username" => "$username",
-                ':time' => time()
-            ])
-            ->execute();
-        return $result;
+            ->fetch();
     }
 
-    /**
-     * @param $username
-     * @param $site_id
-     * @return array|bool|mixed
-     */
     public static function getLatestVote($username, $site_id) {
-        $result = self::getDb()->select(true)
-            ->columns([
-                "*"
-            ])
+        return self::getDb()
             ->from("votes")
             ->where([
-                "voted_on != -1",
-                "username = :username",
-                ":time - voted_on < 43200",
-                "site_id = :sid"
+                "voted_on != ?" => -1,
+                "username = ?" => $username,
+                "(? - voted_on) < ?" => [time(), 43200],
+                "site_id = ?" => $site_id
             ])
-            ->bind([
-                ":username" => "$username",
-                ":time" => time(),
-                ":sid" => $site_id
-            ])
-            ->order('voted_on DESC')
-            ->execute();
-
-        return $result;
+            ->orderBy("voted_on DESC")
+            ->fetch();
     }
 
-    /**
-     * @param $username
-     * @return array|bool|mixed
-     */
     public static function getLastVote($username) {
-        $result = self::getDb()->select(true)
-            ->columns([
-                "*"
-            ])
+        return self::getDb()
             ->from("votes")
             ->where([
-                "voted_on != -1",
-                "username = :username"
+                "voted_on != ?" => -1,
+                "username = ?" => $username
             ])
-            ->bind([
-                ":username" => $username
-            ])
-            ->order('voted_on DESC')
-            ->execute();
-        return $result;
+            ->orderBy("voted_on DESC")
+            ->fetch();
     }
 
-    /**
-     * @param $key
-     * @return array|bool|mixed
-     */
     public static function getVote($key) {
-        $result = self::getDb()->select(true)
-            ->columns([
-                "*"
-            ])
+        return self::getDb()
             ->from("votes")
             ->where([
-                "voted_on = -1",
-                "vote_key = :key"
+                "voted_on = ?" => -1,
+                "vote_key = ?" => $key
             ])
-            ->bind([
-                ":key" => $key
-            ])
-            ->order('voted_on DESC')
-            ->execute();
-        return $result;
+            ->orderBy("voted_on DESC")
+            ->fetch();
     }
 
-    /**
-     * @param $name
-     * @param $ip
-     * @param $vkey
-     * @param $siteId
-     */
     public static function createVote($name, $ip, $vkey, $siteId) {
-        self::getDb()->insert()
-            ->into("votes")
-            ->columns(["username", "ip_address", "vote_key", "site_id", "started_on"])
+        return self::getDb()
+            ->insertInto("votes")
             ->values([
-                [ $name, $ip, $vkey, $siteId, time() ]
-            ])->execute();
+                "username"    => $name,
+                "ip_address"  => $ip,
+                "vote_key"    => $vkey,
+                "site_id"     => $siteId,
+                "started_on"  => time()
+            ])
+            ->execute();
     }
 
     public static function getUsers() {
-        $result = self::getDb()->select()
-            ->columns([
-                'votes.username',
-                'COUNT(*) AS total',
-                'votes.ip_address',
-                'votes.started_on',
-                'votes.voted_on'
-            ])
+        return self::getDb()
             ->from("votes")
-            ->group("votes.username, votes.ip_address, votes.started_on, votes.voted_on")
-            ->order("total DESC, username ASC")
-            ->execute();
-        return $result;
+            ->select([
+                "votes.username",
+                "COUNT(*) AS total",
+                "votes.ip_address",
+                "votes.started_on",
+                "votes.voted_on"
+            ])
+            ->groupBy("votes.username, votes.ip_address, votes.started_on, votes.voted_on")
+            ->orderBy("total DESC, username ASC")
+            ->fetchAll();
     }
 
     public static function getPendingVotes($username) {
-        $result = self::getDb()->select()
-            ->columns(['*'])
+        return self::getDb()
             ->from("votes")
-            ->where(['username = :username AND voted_on != -1 AND claimed = 0'])
-            ->bind([
-                ':username' => $username
-            ])->execute();
-        return $result;
+            ->where([
+                "username = ?" => $username,
+                "voted_on != ?" => -1,
+                "claimed = ?" => 0
+            ])
+            ->fetchAll();
     }
 
-    /**
-     * @param $username
-     * @return bool
-     */
     public static function claimVotes($username) {
-        return self::getDb()->update()->table("votes")
-            ->columns([
-                'claimed' => ':claimed',
-            ])
+        return self::getDb()
+            ->update("votes")
+            ->set(["claimed" => 1])
             ->where([
-                'username = :username',
-                'voted_on != -1',
-                'claimed = 0'
-            ])->bind([
-                ':username'  => $username,
-                ':claimed'  => 1,
-            ])->execute();
+                "username = ?" => $username,
+                "voted_on != ?" => -1,
+                "claimed = ?" => 0
+            ])
+            ->execute();
     }
 
     public static function getUser($username) {
-        $result = self::getDb()->select(true)
-            ->columns([
-                'votes.username',
-                'COUNT(*) AS total',
-                'votes.ip_address',
-                'votes.started_on AS last_vote',
-                '(SELECT COUNT(*) FROM votes v WHERE v.username = votes.username) AS total',
-
-                '(SELECT COUNT(*) FROM votes v WHERE v.username = votes.username AND claimed = 0) AS pending',
-                '(SELECT COUNT(*) FROM votes v WHERE v.username = votes.username AND claimed = 1) AS completed',
-            ])
+        return self::getDb()
             ->from("votes")
-            ->where(['username = :username'])
-            ->group("votes.username, votes.ip_address, votes.started_on")
-            ->order("votes.started_on DESC, username ASC")
-            ->bind([
-                ':username' => $username
+            ->select([
+                "votes.username",
+                "COUNT(*) AS total",
+                "votes.ip_address",
+                "votes.started_on AS last_vote",
+                "(SELECT COUNT(*) FROM votes WHERE username = votes.username) AS total",
+                "(SELECT COUNT(*) FROM votes WHERE username = votes.username AND claimed = 0) AS pending",
+                "(SELECT COUNT(*) FROM votes WHERE username = votes.username AND claimed = 1) AS completed"
             ])
-            ->execute();
-        return $result;
+            ->where(["username = ?" => $username])
+            ->groupBy("votes.username, votes.ip_address, votes.started_on")
+            ->orderBy("votes.started_on DESC, username ASC")
+            ->fetch();
     }
 
-    /**
-     * @param $id
-     * @param $time
-     * @return bool
-     */
     public static function completeVote($id, $time) {
-        return self::getDb()->update()->table("votes")
-            ->columns([
-                'voted_on' => ':voted_on',
-            ])
-            ->where([
-                'id = :id',
-            ])->bind([
-                ':id'    => $id,
-                ':voted_on'  => $time,
-            ])->execute();
+        return self::getDb()
+            ->update("votes")
+            ->set(["voted_on" => $time])
+            ->where(["id = ?" => $id])
+            ->execute();
     }
-
-
 }

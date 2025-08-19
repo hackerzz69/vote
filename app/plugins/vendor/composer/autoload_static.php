@@ -7,22 +7,16 @@ namespace Composer\Autoload;
 class ComposerStaticInitcaaa3e438d94e2ac4c48c8bbf392dd97
 {
     public static $files = array (
+        '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
-        '91c13820943368cd02075753bfe8df8a' => __DIR__ . '/..' . '/ecoal95/php-router/src/php-5.3-support.php',
+        '89efb1254ef2d1c5d80096acd12c4098' => __DIR__ . '/..' . '/twig/twig/src/Resources/core.php',
+        'ffecb95d45175fd40f75be8a23b34f90' => __DIR__ . '/..' . '/twig/twig/src/Resources/debug.php',
+        'c7baa00073ee9c61edf148c51917cfb4' => __DIR__ . '/..' . '/twig/twig/src/Resources/escaper.php',
+        'f844ccf1d25df8663951193c3fc307c8' => __DIR__ . '/..' . '/twig/twig/src/Resources/string_loader.php',
     );
 
     public static $prefixLengthsPsr4 = array (
-        'l' => 
-        array (
-            'lukafurlan\\database\\query\\segment\\' => 34,
-            'lukafurlan\\database\\query\\builder\\' => 34,
-            'lukafurlan\\database\\query\\' => 26,
-            'lukafurlan\\database\\executor\\' => 29,
-            'lukafurlan\\database\\exception\\' => 30,
-            'lukafurlan\\database\\connector\\' => 30,
-            'lukafurlan\\database\\' => 20,
-        ),
         'T' => 
         array (
             'Twig\\' => 5,
@@ -35,71 +29,65 @@ class ComposerStaticInitcaaa3e438d94e2ac4c48c8bbf392dd97
         'R' => 
         array (
             'RobThree\\Auth\\' => 14,
+            'Rammewerk\\Router\\' => 17,
+        ),
+        'E' => 
+        array (
+            'Envms\\FluentPDO\\' => 16,
+        ),
+        'D' => 
+        array (
+            'DASPRiD\\Enum\\' => 13,
+        ),
+        'B' => 
+        array (
+            'BaconQrCode\\' => 12,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'lukafurlan\\database\\query\\segment\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/lukafurlan/php-query-builder/database/query/segment',
-        ),
-        'lukafurlan\\database\\query\\builder\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/lukafurlan/php-query-builder/database/query/builder',
-        ),
-        'lukafurlan\\database\\query\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/lukafurlan/php-query-builder/database/query',
-        ),
-        'lukafurlan\\database\\executor\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/lukafurlan/php-query-builder/database/executor',
-        ),
-        'lukafurlan\\database\\exception\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/lukafurlan/php-query-builder/database/exception',
-        ),
-        'lukafurlan\\database\\connector\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/lukafurlan/php-query-builder/database/connector',
-        ),
-        'lukafurlan\\database\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/lukafurlan/php-query-builder/database',
-        ),
         'Twig\\' => 
         array (
             0 => __DIR__ . '/..' . '/twig/twig/src',
+            1 => __DIR__ . '/..' . '/twig/twig/src',
         ),
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
+            1 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
         ),
         'Symfony\\Polyfill\\Ctype\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-ctype',
+            1 => __DIR__ . '/..' . '/symfony/polyfill-ctype',
         ),
         'RobThree\\Auth\\' => 
         array (
             0 => __DIR__ . '/..' . '/robthree/twofactorauth/lib',
+            1 => __DIR__ . '/..' . '/robthree/twofactorauth/lib',
+        ),
+        'Rammewerk\\Router\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/rammewerk/router/src',
+            1 => __DIR__ . '/..' . '/rammewerk/router/src',
+        ),
+        'Envms\\FluentPDO\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/envms/fluentpdo/src',
+            1 => __DIR__ . '/..' . '/envms/fluentpdo/src',
+        ),
+        'DASPRiD\\Enum\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/dasprid/enum/src',
+        ),
+        'BaconQrCode\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/bacon/bacon-qr-code/src',
         ),
     );
 
-    public static $prefixesPsr0 = array (
-        'T' => 
-        array (
-            'Twig_' => 
-            array (
-                0 => __DIR__ . '/..' . '/twig/twig/lib',
-            ),
-        ),
-        'R' => 
-        array (
-            'Router' => 
-            array (
-                0 => __DIR__ . '/..' . '/ecoal95/php-router/src',
-            ),
-        ),
+    public static $classMap = array (
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
@@ -107,7 +95,7 @@ class ComposerStaticInitcaaa3e438d94e2ac4c48c8bbf392dd97
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInitcaaa3e438d94e2ac4c48c8bbf392dd97::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInitcaaa3e438d94e2ac4c48c8bbf392dd97::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitcaaa3e438d94e2ac4c48c8bbf392dd97::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInitcaaa3e438d94e2ac4c48c8bbf392dd97::$classMap;
 
         }, null, ClassLoader::class);
     }

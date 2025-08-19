@@ -1,0 +1,395 @@
+Script started
+Script started
+
+--- Install attempt at 2025-08-17 22:43:13 ---
+POST: Array
+(
+    [site_title] => SampleVote
+    [web_root] => /install/
+    [MYSQL_HOST] => localhost
+    [MYSQL_DATABASE] => vote
+    [MYSQL_USERNAME] => vote_user
+    [MYSQL_PASSWORD] => pass
+    [admin_username] => root
+    [admin_password] => toor
+)
+
+Attempting DB connection with:
+Host: localhost
+User: vote_user
+Pass: pass
+DB: vote
+DB connection attempted.
+DB connection successful. Proceeding to file write...
+Attempting to open ../app/constants.php for appending...
+Writing to constants.php: 
+
+define('MYSQL_HOST', 'localhost');
+
+define('MYSQL_USERNAME', 'vote_user');
+
+define('MYSQL_PASSWORD', 'pass');
+
+define('MYSQL_DATABASE', 'vote');
+
+define('web_root', '/install/');
+
+define('site_title', 'SampleVote');
+
+
+Successfully wrote to constants.php
+DB import successful
+Script started
+Script started
+Script started
+Script started
+Script started
+Script started
+Script started
+Script started
+Script started
+Script started
+Script started
+Script started
+Script started
+Script started
+Script started
+Script started
+Script started
+Script started
+
+--- Install attempt at 2025-08-17 23:34:48 ---
+POST: Array
+(
+    [site_title] => SampleVote
+    [web_root] => /
+    [MYSQL_HOST] => localhost
+    [MYSQL_DATABASE] => vote
+    [MYSQL_USERNAME] => vote_user
+    [MYSQL_PASSWORD] => pass
+    [admin_username] => root
+    [admin_password] => toor
+)
+
+Attempting DB connection with:
+Host: localhost
+User: vote_user
+Pass: pass
+DB: vote
+DB connection attempted.
+DB connection successful. Proceeding to file write...
+Opening constants.php for appending...
+Writing to constants.php:
+
+
+define('MYSQL_HOST', 'localhost');
+
+define('MYSQL_USERNAME', 'vote_user');
+
+define('MYSQL_PASSWORD', 'pass');
+
+define('MYSQL_DATABASE', 'vote');
+
+define('web_root', '/');
+
+define('site_title', 'SampleVote');
+
+
+Successfully wrote to constants.php
+DB import successful
+Script started
+Script started
+Script started
+Script started
+Script started
+
+--- Install attempt at 2025-08-17 23:55:22 ---
+POST: Array
+(
+    [site_title] => SampleVote
+    [web_root] => /
+    [MYSQL_HOST] => localhost
+    [MYSQL_DATABASE] => vote
+    [MYSQL_USERNAME] => vote_user
+    [MYSQL_PASSWORD] => pass
+    [admin_username] => root
+    [admin_password] => toor
+)
+
+Attempting DB connection with:
+Host: localhost
+User: vote_user
+Pass: pass
+DB: vote
+DB connection attempted.
+DB connection successful. Proceeding to file write...
+Opening constants.php for appending...
+Writing to constants.php:
+
+
+define('MYSQL_HOST', 'localhost');
+
+define('MYSQL_USERNAME', 'vote_user');
+
+define('MYSQL_PASSWORD', 'pass');
+
+define('MYSQL_DATABASE', 'vote');
+
+define('web_root', '/');
+
+define('site_title', 'SampleVote');
+
+
+Successfully wrote to constants.php
+DB import successful
+Script started
+Script started
+Script started
+
+--- Install attempt at 2025-08-17 23:56:57 ---
+POST: Array
+(
+    [site_title] => SampleVote
+    [web_root] => /
+    [MYSQL_HOST] => localhost
+    [MYSQL_DATABASE] => vote
+    [MYSQL_USERNAME] => vote_user
+    [MYSQL_PASSWORD] => pass
+    [admin_username] => root
+    [admin_password] => toor
+)
+
+Attempting DB connection with:
+Host: localhost
+User: vote_user
+Pass: pass
+DB: vote
+DB connection attempted.
+DB connection successful. Proceeding to file write...
+Opening constants.php for appending...
+Writing to constants.php:
+
+
+define('MYSQL_HOST', 'localhost');
+
+define('MYSQL_USERNAME', 'vote_user');
+
+define('MYSQL_PASSWORD', 'pass');
+
+define('MYSQL_DATABASE', 'vote');
+
+define('web_root', '/');
+
+define('site_title', 'SampleVote');
+
+
+Successfully wrote to constants.php
+DB import successful
+Script started
+
+--- Install attempt at 2025-08-18 00:21:00 ---
+POST: Array
+(
+    [site_title] => SampleVote
+    [web_root] => /
+    [MYSQL_HOST] => localhost
+    [MYSQL_DATABASE] => vote
+    [MYSQL_USERNAME] => vote_user
+    [MYSQL_PASSWORD] => pass
+    [admin_username] => root
+    [admin_password] => toor
+)
+
+Attempting DB connection with:
+Host: localhost
+User: vote_user
+Pass: pass
+DB: vote
+DB connection attempted.
+DB connection successful. Proceeding to file write...
+Opening constants.php for appending...
+Writing to constants.php:
+
+
+define('MYSQL_HOST', 'localhost');
+
+define('MYSQL_USERNAME', 'vote_user');
+
+define('MYSQL_PASSWORD', 'pass');
+
+define('MYSQL_DATABASE', 'vote');
+
+define('web_root', '/');
+
+define('site_title', 'SampleVote');
+
+
+Successfully wrote to constants.php
+DB import successful
+Script started
+Script started
+Script started
+
+--- Install attempt at 2025-08-18 00:22:17 ---
+POST: Array
+(
+    [site_title] => SampleVote
+    [web_root] => /
+    [MYSQL_HOST] => localhost
+    [MYSQL_DATABASE] => vote
+    [MYSQL_USERNAME] => vote_user
+    [MYSQL_PASSWORD] => pass
+    [admin_username] => root
+    [admin_password] => toor
+)
+
+Attempting DB connection with:
+Host: localhost
+User: vote_user
+Pass: pass
+DB: vote
+DB connection attempted.
+DB connection successful. Proceeding to file write...
+Opening constants.php for appending...
+Writing to constants.php:
+
+
+define('MYSQL_HOST', 'localhost');
+
+define('MYSQL_USERNAME', 'vote_user');
+
+define('MYSQL_PASSWORD', 'pass');
+
+define('MYSQL_DATABASE', 'vote');
+
+define('web_root', '/');
+
+define('site_title', 'SampleVote');
+
+
+Successfully wrote to constants.php
+DB import successful
+Script started
+
+--- Install attempt at 2025-08-18 00:30:34 ---
+POST: Array
+(
+    [site_title] => SampleVote
+    [web_root] => /
+    [MYSQL_HOST] => localhost
+    [MYSQL_DATABASE] => vote
+    [MYSQL_USERNAME] => vote_user
+    [MYSQL_PASSWORD] => pass
+    [admin_username] => root
+    [admin_password] => toor
+)
+
+Attempting DB connection with:
+Host: localhost
+User: vote_user
+Pass: pass
+DB: vote
+DB connection attempted.
+DB connection successful. Proceeding to constants.php update...
+Reading constants.php for marker replacement...
+constants.php updated successfully.
+DB import successful
+Script started
+Script started
+Script started
+Script started
+
+--- Install attempt at 2025-08-18 00:31:52 ---
+POST: Array
+(
+    [site_title] => SampleVote
+    [web_root] => /
+    [MYSQL_HOST] => localhost
+    [MYSQL_DATABASE] => vote
+    [MYSQL_USERNAME] => vote_user
+    [MYSQL_PASSWORD] => pass
+    [admin_username] => root
+    [admin_password] => toor
+)
+
+Attempting DB connection with:
+Host: localhost
+User: vote_user
+Pass: pass
+DB: vote
+DB connection attempted.
+DB connection successful. Proceeding to constants.php update...
+Reading constants.php for marker replacement...
+constants.php updated successfully.
+DB import successful
+Script started
+
+--- Install attempt at 2025-08-18 00:32:26 ---
+POST: Array
+(
+    [site_title] => SampleVote
+    [web_root] => /
+    [MYSQL_HOST] => localhost
+    [MYSQL_DATABASE] => vote
+    [MYSQL_USERNAME] => vote_user
+    [MYSQL_PASSWORD] => pass
+    [admin_username] => root
+    [admin_password] => toor
+)
+
+Attempting DB connection with:
+Host: localhost
+User: vote_user
+Pass: pass
+DB: vote
+DB connection attempted.
+DB connection successful. Proceeding to constants.php update...
+Reading constants.php for marker replacement...
+constants.php updated successfully.
+DB import successful
+Script started
+Script started
+Script started
+Script started
+Script started
+
+--- Install attempt at 2025-08-19 01:32:35 ---
+POST: Array
+(
+    [site_title] => SampleVote
+    [web_root] => /
+    [MYSQL_HOST] => localhost
+    [MYSQL_DATABASE] => vote
+    [MYSQL_USERNAME] => vote_user
+    [MYSQL_PASSWORD] => pass
+    [admin_username] => root
+    [admin_password] => toor
+)
+
+Attempting DB connection with:
+Host: localhost
+User: vote_user
+Pass: pass
+DB: vote
+Script started
+
+--- Install attempt at 2025-08-19 01:32:59 ---
+POST: Array
+(
+    [site_title] => SampleVote
+    [web_root] => /
+    [MYSQL_HOST] => localhost
+    [MYSQL_DATABASE] => vote
+    [MYSQL_USERNAME] => vote_user
+    [MYSQL_PASSWORD] => pass
+    [admin_username] => root
+    [admin_password] => toor
+)
+
+Attempting DB connection with:
+Host: localhost
+User: vote_user
+Pass: pass
+DB: vote
+Script started
+Script started

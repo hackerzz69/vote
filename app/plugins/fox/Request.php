@@ -82,22 +82,22 @@ class Request {
             return null;
         }
 
-        if ($filter != null) {
-            if ($filter == 'string') {
-                $value = htmlspecialchars(filter_var($value, FILTER_SANITIZE_STRING,
-                    FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH));
-            }
-            if ($filter == "int") {
-                $value = filter_var($value, FILTER_SANITIZE_NUMBER_INT,
-                    FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
-            }
-            if ($filter == "email") {
-                $value = filter_var($value, FILTER_SANITIZE_EMAIL);
-            }
-            if ($filter == "url") {
-                $value = filter_var($value, FILTER_SANITIZE_URL);
-            }
-        }
+        if ($filter !== null) {
+    switch ($filter) {
+        case 'string':
+            $value = htmlspecialchars(strip_tags($value), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+            break;
+        case 'int':
+            $value = filter_var($value, FILTER_SANITIZE_NUMBER_INT);
+            break;
+        case 'email':
+            $value = filter_var($value, FILTER_SANITIZE_EMAIL);
+            break;
+        case 'url':
+            $value = filter_var($value, FILTER_SANITIZE_URL);
+            break;
+    }
+}
 
         return $value;
     }

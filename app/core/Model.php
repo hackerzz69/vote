@@ -1,18 +1,24 @@
 <?php
 
-use lukafurlan\database\connector\ConnectorType;
-use lukafurlan\database\DMLQuery\DMLQueryManager;
-use NilPortugues\Sql\QueryBuilder\Builder\GenericBuilder;
+use Envms\FluentPDO\Query;
 
 class Model {
 
-	protected static $database;
+    protected static ?PDO $pdo = null;
+    protected static ?Query $fluent = null;
 
-    public static function getDb() {
-	    if (!self::$database) {
-            self::$database = new DMLQueryManager(ConnectorType::MYSQL);
+    public static function getDb(): Query {
+        if (!self::$fluent) {
+            if (!self::$pdo) {
+                self::$pdo = new PDO(
+                    'mysql:host=' . MYSQL_HOST . ';dbname=' . MYSQL_DATABASE . ';charset=utf8mb4',
+                    MYSQL_USERNAME,
+                    MYSQL_PASSWORD
+                );
+                self::$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            }
+            self::$fluent = new Query(self::$pdo);
         }
-	    return self::$database;
+        return self::$fluent;
     }
-
 }

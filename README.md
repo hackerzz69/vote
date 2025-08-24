@@ -40,10 +40,11 @@ A secure, modular PHP voting platform with user authentication, admin panel, and
 ## Setup
 
 1. Clone the repository and place it in your web server root.
-2. Run the installer at `/install/` in your browser.
-3. Follow the prompts to configure the database and admin account.
-4. (Optional) Enable the "auto-delete installer" option for security.
-5. Access the site via `/index.php` or your configured web root.
+2. Run `composer install` inside the `app/plugins/` directory to install PHP dependencies.
+3. Run the installer at `/install/` in your browser.
+4. Follow the prompts to configure the database and admin account.
+5. (Optional) Enable the "auto-delete installer" option for security.
+6. Access the site via `/index.php` or your configured web root.
 
 ## Requirements
 

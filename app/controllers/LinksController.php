@@ -1,6 +1,5 @@
 <?php
 
-
 use Fox\CSRF;
 
 class LinksController extends Controller {
@@ -10,6 +9,12 @@ class LinksController extends Controller {
     }
 
     public function toggle($id = null) {
+        if (!is_numeric($id)) {
+            $this->setView("errors/show404");
+            return;
+        }
+
+        $id = (int) $id;
         $link = VoteLinks::getLink($id);
 
         if (!$link) {
@@ -17,12 +22,18 @@ class LinksController extends Controller {
             return;
         }
 
-        VoteLinks::setActive($link['id'], $link['active'] == 1 ? 0 : 1);
+        VoteLinks::setActive($id, $link['active'] == 1 ? 0 : 1);
         $this->redirect("admin/links");
         exit;
     }
 
     public function edit($id = null) {
+        if (!is_numeric($id)) {
+            $this->setView("errors/show404");
+            return;
+        }
+
+        $id = (int) $id;
         $link = VoteLinks::getLink($id);
 
         if (!$link) {
@@ -37,16 +48,15 @@ class LinksController extends Controller {
 
             if (strlen($title) < 3 || strlen($title) > 20) {
                 $this->set("error", "Title must be between 3 and 20 characters.");
-            } else if (empty($url) || !filter_var($url, FILTER_VALIDATE_URL)) {
+            } elseif (empty($url) || !filter_var($url, FILTER_VALIDATE_URL)) {
                 $this->set("error", "Url is not valid.");
             } else {
-                $edited = VoteLinks::editLink($link['id'], $title, $url, $site_id);
+                $edited = VoteLinks::editLink($id, $title, $url, $site_id);
 
                 if ($edited) {
-                    $this->redirect("admin/links/edit/".$link['id']);
+                    $this->redirect("admin/links/edit/" . $id);
                     exit;
                 }
-
             }
         }
 
@@ -62,7 +72,7 @@ class LinksController extends Controller {
 
             if (strlen($title) < 3 || strlen($title) > 20) {
                 $this->set("error", "Title must be between 3 and 20 characters.");
-            } else if (empty($url) || !filter_var($url, FILTER_VALIDATE_URL)) {
+            } elseif (empty($url) || !filter_var($url, FILTER_VALIDATE_URL)) {
                 $this->set("error", "Url is not valid.");
             } else {
                 $added = VoteLinks::addLink($title, $url, $site_id);
@@ -80,6 +90,12 @@ class LinksController extends Controller {
     }
 
     public function delete($id = null) {
+        if (!is_numeric($id)) {
+            $this->setView("errors/show404");
+            return;
+        }
+
+        $id = (int) $id;
         $link = VoteLinks::getLink($id);
 
         if (!$link) {
@@ -101,6 +117,4 @@ class LinksController extends Controller {
         $this->set("link", $link);
         $this->set("csrf_token", CSRF::token());
     }
-
-
 }

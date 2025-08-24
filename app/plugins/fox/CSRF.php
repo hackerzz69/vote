@@ -65,11 +65,13 @@
 		{
 			self::startSession();
 			
-			$tokenList = unserialize($_SESSION['X-CSRF-TOKEN-LIST']);
-			if (!is_array($tokenList))
-			{
+			$tokenList = [];
+			if (!empty($_SESSION['X-CSRF-TOKEN-LIST'])) {
+				$tokenList = unserialize($_SESSION['X-CSRF-TOKEN-LIST']);
+			}
+			if (!is_array($tokenList)) {
 				$tokenList = array();
-			}			
+			}
 			array_push($tokenList, $token);
 			$_SESSION['X-CSRF-TOKEN-LIST'] = serialize($tokenList);
 		}
@@ -78,11 +80,14 @@
 		{
 			self::startSession();
 			
-			$tokenList = unserialize($_SESSION['X-CSRF-TOKEN-LIST']);
-			if(in_array($token, $tokenList)){
+			$tokenList = [];
+			if (!empty($_SESSION['X-CSRF-TOKEN-LIST'])) {
+				$tokenList = unserialize($_SESSION['X-CSRF-TOKEN-LIST']);
+			}
+			if (is_array($tokenList) && in_array($token, $tokenList)) {
 				self::removeToken($token);
 				return true;
-			}else{
+			} else {
 				return false;
 			}
 		}
@@ -90,9 +95,14 @@
 		private static function removeToken($token)
 		{
 			self::startSession();
-			$tokenList = unserialize($_SESSION['X-CSRF-TOKEN-LIST']);
+			$tokenList = [];
+			if (!empty($_SESSION['X-CSRF-TOKEN-LIST'])) {
+				$tokenList = unserialize($_SESSION['X-CSRF-TOKEN-LIST']);
+			}
 			$index = array_search($token, $tokenList);
-			unset($tokenList[$index]);
+			if ($index !== false) {
+				unset($tokenList[$index]);
+			}
 			$_SESSION['X-CSRF-TOKEN-LIST'] = serialize($tokenList);
 		}
 		

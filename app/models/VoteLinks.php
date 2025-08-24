@@ -4,56 +4,42 @@ use Fox\QueryType;
 
 class VoteLinks extends Model {
 
-    public static function editLink($id, $title, $link, $siteId) {
-        return self::getDb()->update()->table("vote_links")
-            ->columns([
-                'title'   => ":title",
-                'url'     => ":url",
-                'site_id' => ':site_id'
+    public static function addLink($title, $url, $site_id) {
+        return self::getDb()
+            ->insertInto("vote_links", ["title", "url", "site_id", "active"])
+            ->values([
+                'title'   => $title,
+                'url'     => $url,
+                'site_id' => $site_id,
+                'active'  => 1
             ])
-            ->where([
-                'id = :id'
-            ])->bind([
-                ':id'      => $id,
-                ':title'   => $title,
-                ':url'     => $link,
-                ':site_id' => $siteId
-            ])->execute();
+            ->execute();
+    }
+
+    public static function editLink($id, $title, $link, $siteId) {
+        return self::getDb()
+            ->update("vote_links")
+            ->set([
+                'title'   => $title,
+                'url'     => $link,
+                'site_id' => $siteId
+            ])
+            ->where("id", $id)
+            ->execute();
     }
 
     public static function setActive($id, $active) {
-        return self::getDb()->update()->table("vote_links")
-            ->columns([
-                'active' => ":active",
-            ])
-            ->where([
-                'id = :id'
-            ])->bind([
-                ':id'      => $id,
-                ':active'  => $active,
-            ])->execute();
+        return self::getDb()
+            ->update("vote_links")
+            ->set(['active' => $active])
+            ->where("id", $id)
+            ->execute();
     }
 
     public static function deleteLink($id) {
-        return self::getDb()->delete()
-            ->from("vote_links")
-            ->where(["id = :id"])
-            ->bind([":id" => $id])
-            ->execute();
-    }
-
-
-    /**
-     * Returns all voting links
-     * @return array
-     */
-    public static function getLinks() {
-        return self::getDb()->select()
-            ->columns([
-                "*",
-                '(SELECT COUNT(*) FROM votes WHERE votes.site_id = vote_links.id) AS votes'
-            ])
-            ->from("vote_links")
+        return self::getDb()
+            ->deleteFrom("vote_links")
+            ->where("id", $id)
             ->execute();
     }
 
@@ -61,39 +47,34 @@ class VoteLinks extends Model {
      * Returns all voting links
      * @return array
      */
-	public static function getVoteLinks() {
-        return self::getDb()->select()
-            ->columns(["*"])
+    public static function getLinks(): array {
+        return self::getDb()
             ->from("vote_links")
-            ->where(["active = 1"])
-            ->execute();
+            ->fetchAll(); // Changed from execute() to fetchAll()
+    }
+
+    /**
+     * Returns all active voting links
+     * @return array
+     */
+    public static function getVoteLinks(): array {
+        return self::getDb()
+            ->from("vote_links")
+            ->where("active", 1)
+            ->fetchAll(); // Changed from execute() to fetchAll()
     }
 
     /**
      * Returns a single vote link based on the id column
-     * @param $id
-     * @return mixed
+     * @param int $id
+     * @return array|null
      */
-    public static function getLink($id) {
-        return self::getDb()->select()
-            ->columns(["*"])
+    public static function getLink(int $id): ?array {
+        $link = self::getDb()
             ->from("vote_links")
-            ->where(["id = :id"])
-            ->bind([':id' => $id])
-            ->getSingle(true)
-            ->execute();
+            ->where("id", $id)
+            ->fetch(); // Replaces getSingle(true)->execute()
+
+        return $link ?: null;
     }
-
-    public static function addLink($title, $url, $site_id) {
-        return self::getDb()->insert()
-            ->into("vote_links")
-            ->columns(["title", "url", "site_id", "active"])
-            ->values([
-                [ $title, $url, $site_id, 1 ]
-            ])->execute();
-    }
-
-
-
-
 }

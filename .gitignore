@@ -1,0 +1,45 @@
+# OS & Editor junk
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.swp
+*.bak
+*.sublime-workspace
+*.sublime-project
+
+# IDE configs
+.vscode/
+.idea/
+
+# Composer dependencies
+app/plugins/vendor/
+app/plugins/composer.lock
+
+# Installer artifacts
+install/install_log.txt
+install/test_WRITE.php
+
+# Local environment
+.env
+.env.local
+.env.*.local
+
+# Cache & sessions
+storage/
+cache/
+sessions/
+
+# Database dumps
+*.sql
+
+# Node modules (if used)
+node_modules/
+
+# Build artifacts
+/public/css/*.map
+/public/js/*.map
+
+# Test files
+test.php
+app/plugins/test.php

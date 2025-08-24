@@ -76,6 +76,10 @@ class AdminController extends Controller
                 $this->set("error", $e->getMessage());
             }
         }
+
+        // ✅ Refresh user after potential update
+        $user = Users::getUserById($user_id);
+        $this->set("user", $user);
     }
 
     public function voters()

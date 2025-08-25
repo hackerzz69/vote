@@ -58,31 +58,31 @@ class PageRouter extends Router
         $this->add('admin/users/delete/([0-9]+)', fn(...$args) => $this->setRoute('users', 'delete', ['id' => $args[0]]));
 
         foreach ($this->routes as $pattern => $route) {
-            error_log("📌 Registered route: $pattern");
+            //error_log("📌 Registered route: $pattern");
         }
     }
 
     public function dispatch(?string $path = null, ?object $serverRequest = null): mixed
     {
         $this->path = trim($path ?? $this->getUriPath(), '/ ');
-        error_log("🔍 Dispatching path: '{$this->path}'");
+        //error_log("🔍 Dispatching path: '{$this->path}'");
 
         $reflection = new \ReflectionClass(Router::class);
         $property = $reflection->getProperty('node');
         $property->setAccessible(true);
         $node = $property->getValue($this);
-        error_log("🧠 Node is " . ($node ? 'set' : 'null'));
+        //error_log("🧠 Node is " . ($node ? 'set' : 'null'));
 
-        error_log("📜 Available routes: " . implode(', ', array_keys($this->routes)));
+        //error_log("📜 Available routes: " . implode(', ', array_keys($this->routes)));
 
         $route = $this->routes[$this->path] ?? null;
         $args = [];
 
         if (!$route && $node) {
             $matched = $node->match($this->path);
-            error_log("🧪 Node match result: " . ($matched ? 'matched' : 'null'));
+            //error_log("🧪 Node match result: " . ($matched ? 'matched' : 'null'));
             if ($matched) {
-                error_log("🧪 Matched route pattern: " . ($matched->pattern ?? '[unknown]'));
+                //error_log("🧪 Matched route pattern: " . ($matched->pattern ?? '[unknown]'));
                 $route = $matched;
                 $args = $route->getArguments();
             }
@@ -103,7 +103,7 @@ class PageRouter extends Router
         }
 
         if (!$route) {
-            error_log("❌ 404: No route matched for '{$this->path}'");
+            //error_log("❌ 404: No route matched for '{$this->path}'");
             throw new \Rammewerk\Router\Error\InvalidRoute("No route found for path: {$this->path}");
         }
 

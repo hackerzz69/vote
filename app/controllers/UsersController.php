@@ -9,9 +9,7 @@ class UsersController extends Controller {
     }
 
     public function delete($id = null) {
-        error_log("[DEBUG] Delete called with id: $id", 3, __DIR__ . '/../../error.log');
         $user = Users::getUserById($id);
-        error_log("[DEBUG] Delete user lookup: " . print_r($user, true), 3, __DIR__ . '/../../error.log');
 
         if (!$user) {
             $this->setView("errors/show404");
@@ -39,9 +37,7 @@ class UsersController extends Controller {
     }
 
     public function edit($id = null) {
-        error_log("[DEBUG] Edit called with id: $id", 3, __DIR__ . '/../../error.log');
         $user = Users::getUserById($id);
-        error_log("[DEBUG] Edit user lookup: " . print_r($user, true), 3, __DIR__ . '/../../error.log');
 
         if (!$user) {
             $this->setView("errors/show404");
@@ -53,7 +49,7 @@ class UsersController extends Controller {
             return;
         }
 
-        if ($this->request->isPost() && CSRF::post() ) {
+        if ($this->request->isPost() && CSRF::post()) {
             $username  = $this->request->getPost("username", 'string');
             $password  = $this->request->getPost("password");
             $scopes    = $this->request->getPost("access_list");
@@ -79,19 +75,10 @@ class UsersController extends Controller {
     }
 
     public function add() {
-
         if ($this->request->isPost() && CSRF::post()) {
-            $username  = trim($this->request->getPost("username", 'string'));
+            $username  = $this->request->getPost("username", 'string');
             $password  = $this->request->getPost("password");
             $scopes    = $this->request->getPost("access_list");
-            if (is_array($scopes)) {
-                $scopes = json_encode($scopes);
-            }
-
-            if (empty($username) || empty($password) || empty($scopes)) {
-                $this->set("error", "All fields are required.");
-                return;
-            }
 
             $user = Users::getUser($username);
 
@@ -118,20 +105,22 @@ class UsersController extends Controller {
         $scopes = [];
 
         foreach ($this->router->routes as $route) {
-            if (method_exists($route, 'getHandler')) {
-                $handler = $route->getHandler();
-                try {
-                    $scope = call_user_func($handler, []);
-                } catch (\Throwable $e) {
-                    continue; // Skip routes that throw (e.g., Method Not Allowed)
-                }
-                if ($scope[0] == "index" || $scope[0] == 'login' || $scope[0] == "api")
-                    continue;
-                $scopes[$scope[0]][] = $scope[1];
+            if (!method_exists($route, 'getHandler')) continue;
+
+            $handler = $route->getHandler();
+            if (!is_callable($handler)) continue;
+
+            try {
+                $scope = $handler([]);
+            } catch (\Throwable $e) {
+                continue;
             }
+
+            if (in_array($scope[0], ['index', 'login', 'api'])) continue;
+
+            $scopes[$scope[0]][] = $scope[1];
         }
 
         return $scopes;
     }
-
 }

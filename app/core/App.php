@@ -18,27 +18,27 @@ class App
 
         try {
             $this->router->dispatch();
-            error_log("[Router] Dispatched route: " . json_encode([
-                'controller' => $this->router->getController(true),
-                'method'     => $this->router->getMethod(),
-                'params'     => $this->router->getParams()
-            ]));
+            // error_log("[Router] Dispatched route: " . json_encode([
+            //     'controller' => $this->router->getController(true),
+            //     'method'     => $this->router->getMethod(),
+            //     'params'     => $this->router->getParams()
+            // ]));
         } catch (InvalidRoute $e) {
             error_log("[Router] Invalid route: " . $e->getMessage());
             $this->router->setRoute("errors", "show404");
         }
 
         $controllerClass = $this->router->getController(true);
-        error_log("[App] Instantiating controller: $controllerClass");
+        // error_log("[App] Instantiating controller: $controllerClass");
 
         $this->controller = new $controllerClass();
 
         if (!method_exists($this->controller, $this->router->getMethod())) {
-            error_log("[App] Method not found: " . $this->router->getMethod());
+            // error_log("[App] Method not found: " . $this->router->getMethod());
             $this->router->setRoute("errors", "show404");
 
             $controllerClass = $this->router->getController(true);
-            error_log("[App] Fallback controller: $controllerClass");
+            // error_log("[App] Fallback controller: $controllerClass");
             $this->controller = new $controllerClass();
         }
 
@@ -47,34 +47,34 @@ class App
         $this->controller->setRouter($this->router);
 
         if ($this->initRoute()) {
-            error_log("[App] Showing view: " . $this->controller->getView());
+            // error_log("[App] Showing view: " . $this->controller->getView());
             $this->controller->show();
         } else {
-            error_log("[App] View rendering skipped.");
+            // error_log("[App] View rendering skipped.");
         }
     }
 
     public function initRoute()
     {
         if (method_exists($this->controller, "beforeExecute")) {
-            error_log("[App] Calling beforeExecute()");
+            // error_log("[App] Calling beforeExecute()");
             $this->controller->beforeExecute();
         }
 
         $bearerToken = $this->controller->getRequest()->getBearerToken();
-        error_log("[App] Bearer token: $bearerToken");
+        // error_log("[App] Bearer token: $bearerToken");
 
         if ($this->controller->isJson()) {
-            error_log("[App] JSON mode enabled");
+            // error_log("[App] JSON mode enabled");
 
             if ($bearerToken !== api_key) {
-                error_log("[App] Invalid API key");
+                // error_log("[App] Invalid API key");
                 $output = ["error" => "Invalid API Key: $bearerToken"];
             } else {
-                error_log("[App] Executing JSON method: " . $this->router->getMethod());
+                // error_log("[App] Executing JSON method: " . $this->router->getMethod());
                 $output = call_user_func_array(
                     [$this->controller, $this->router->getMethod()],
-                    $this->router->getParams()
+                    array_values($this->router->getParams())
                 );
             }
 
@@ -85,10 +85,10 @@ class App
             return false;
         }
 
-        error_log("[App] Executing HTML method: " . $this->router->getMethod());
+        // error_log("[App] Executing HTML method: " . $this->router->getMethod());
         $output = call_user_func_array(
             [$this->controller, $this->router->getMethod()],
-            $this->router->getParams()
+            array_values($this->router->getParams())
         );
 
         if ($this->controller->getActionName() === "callback") {

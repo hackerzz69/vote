@@ -1,69 +1,78 @@
 <?php
+
 namespace Fox;
 
+use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 use Twig\Loader\FilesystemLoader;
 use Twig\TemplateWrapper;
+use Twig\TwigFunction;
 use Twig\TwigFilter;
-use Twig_SimpleFilter;
 
-class Template extends FilesystemLoader {
+class Template extends FilesystemLoader
+{
+    private bool $cache_enabled = true;
 
-    public function __construct($paths = [], $rootPath = null) {
+    public function __construct($paths = [], $rootPath = null)
+    {
         parent::__construct($paths, $rootPath);
     }
 
-    private $cache_enabled = true;
-
     /**
-     * @param $path
+     * Loads and renders a Twig template
+     * @param string $path
      * @return TemplateWrapper|null
      */
-    public function load($path) {
+    public function load(string $path): ?TemplateWrapper
+    {
         try {
-            $twig = new \Twig\Environment($this, !$this->cache_enabled ? [] : ['cache' => 'app/cache']);
+            $twig = new Environment($this, $this->cache_enabled
+                ? ['cache' => 'app/cache']
+                : []
+            );
 
-            $twig->addFunction(new \Twig\TwigFunction('url', function ($string, $internal = true) {
-                return $internal ? web_root . $string : $string;
-            }));
+            $twig->addFunction(new TwigFunction('url', fn($string, $internal = true) =>
+                $internal ? web_root . $string : $string
+            ));
 
-            $twig->addFunction(new \Twig\TwigFunction('stylesheet', function ($string) {
-                return web_root.'public/css/' . $string . '';
-            }));
+            $twig->addFunction(new TwigFunction('stylesheet', fn($string) =>
+                web_root . 'public/css/' . $string
+            ));
 
-            $twig->addFunction(new \Twig\TwigFunction('javascript', function ($string) {
-                return web_root . 'public/js/' . $string . '';
-            }));
+            $twig->addFunction(new TwigFunction('javascript', fn($string) =>
+                web_root . 'public/js/' . $string
+            ));
 
-            $twig->addFunction(new \Twig\TwigFunction('constant', function ($string) {
-                return constant($string);
-            }));
+            $twig->addFunction(new TwigFunction('constant', fn($string) =>
+                constant($string)
+            ));
 
-            $twig->addFunction(new \Twig\TwigFunction('curdate', function ($string) {
-                return date($string);
-            }));
+            $twig->addFunction(new TwigFunction('curdate', fn($format) =>
+                date($format)
+            ));
 
-            $twig->addFunction(new \Twig\TwigFunction('debugArr', function ($string) {
-                return json_encode($string, JSON_PRETTY_PRINT);
-            }));
+            $twig->addFunction(new TwigFunction('debugArr', fn($array) =>
+                json_encode($array, JSON_PRETTY_PRINT)
+            ));
 
-            $twig->addFunction(new \Twig\TwigFunction('in_array', function ($needle, $haystack) {
-                return in_array($needle, $haystack);
-            }));
+            $twig->addFunction(new TwigFunction('in_array', fn($needle, $haystack) =>
+                in_array($needle, $haystack)
+            ));
 
-            $twig->addFilter(new TwigFilter('array_chunk', function($array, $limit) {
-                return array_chunk($array, $limit);
-            }));
+            $twig->addFilter(new TwigFilter('array_chunk', fn($array, $limit) =>
+                array_chunk($array, $limit)
+            ));
 
             return $twig->load($path . '.twig');
-        } catch (LoaderError|RuntimeError|SyntaxError $e) {
+        } catch (LoaderError | RuntimeError | SyntaxError $e) {
             return null;
         }
     }
 
-    public function setCacheEnabled($val) {
+    public function setCacheEnabled(bool $val): void
+    {
         $this->cache_enabled = $val;
     }
 }

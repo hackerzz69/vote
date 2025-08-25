@@ -5,8 +5,10 @@ use Rammewerk\Router\Error\InvalidRoute;
 
 class App
 {
-    /** @var Controller controller */
+    /** @var Controller */
     private $controller;
+
+    /** @var PageRouter */
     private $router;
 
     public function __construct()
@@ -26,19 +28,18 @@ class App
             $this->router->setRoute("errors", "show404");
         }
 
-        $controller = $this->router->getController(true);
-        error_log("[App] Instantiating controller: $controller");
+        $controllerClass = $this->router->getController(true);
+        error_log("[App] Instantiating controller: $controllerClass");
 
-        /** @var Controller controller */
-        $this->controller = new $controller();
+        $this->controller = new $controllerClass();
 
         if (!method_exists($this->controller, $this->router->getMethod())) {
             error_log("[App] Method not found: " . $this->router->getMethod());
             $this->router->setRoute("errors", "show404");
 
-            $controller = $this->router->getController(true);
-            error_log("[App] Fallback controller: $controller");
-            $this->controller = new $controller();
+            $controllerClass = $this->router->getController(true);
+            error_log("[App] Fallback controller: $controllerClass");
+            $this->controller = new $controllerClass();
         }
 
         $this->controller->setView($this->router->getViewPath());
@@ -57,18 +58,18 @@ class App
     {
         if (method_exists($this->controller, "beforeExecute")) {
             error_log("[App] Calling beforeExecute()");
-            call_user_func_array([$this->controller, "beforeExecute"], []);
+            $this->controller->beforeExecute();
         }
 
-        $bearer_token = $this->controller->getRequest()->getBearerToken();
-        error_log("[App] Bearer token: $bearer_token");
+        $bearerToken = $this->controller->getRequest()->getBearerToken();
+        error_log("[App] Bearer token: $bearerToken");
 
         if ($this->controller->isJson()) {
             error_log("[App] JSON mode enabled");
 
-            if ($bearer_token != api_key) {
+            if ($bearerToken !== api_key) {
                 error_log("[App] Invalid API key");
-                $output = ["error" => "Invalid API Key: " . $bearer_token];
+                $output = ["error" => "Invalid API Key: $bearerToken"];
             } else {
                 error_log("[App] Executing JSON method: " . $this->router->getMethod());
                 $output = call_user_func_array(
@@ -77,25 +78,25 @@ class App
                 );
             }
 
-            if (is_subclass_of($this->controller, "Controller")) {
+            if (is_subclass_of($this->controller, Controller::class)) {
                 header("Content-Type: application/json; charset=UTF-8");
                 echo json_encode($output, JSON_PRETTY_PRINT);
             }
             return false;
-        } else {
-            error_log("[App] Executing HTML method: " . $this->router->getMethod());
-            $output = call_user_func_array(
-                [$this->controller, $this->router->getMethod()],
-                $this->router->getParams()
-            );
-
-            if ($this->controller->getActionName() == "callback") {
-                header("Content-Type: application/json; charset=UTF-8");
-                echo json_encode($output, JSON_PRETTY_PRINT);
-                return false;
-            }
-
-            return true;
         }
+
+        error_log("[App] Executing HTML method: " . $this->router->getMethod());
+        $output = call_user_func_array(
+            [$this->controller, $this->router->getMethod()],
+            $this->router->getParams()
+        );
+
+        if ($this->controller->getActionName() === "callback") {
+            header("Content-Type: application/json; charset=UTF-8");
+            echo json_encode($output, JSON_PRETTY_PRINT);
+            return false;
+        }
+
+        return true;
     }
 }

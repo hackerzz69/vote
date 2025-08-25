@@ -32,7 +32,7 @@ class AdminController extends Controller
     {
         $user = $this->security->getUser();
         $user_id = $user["id"];
-        $username = $user["username"];
+        $username = strtolower($user["username"]);
 
         if ($user["mfa_secret"]) {
             if ($this->request->hasQuery("remove")) {
@@ -82,35 +82,44 @@ class AdminController extends Controller
         $this->set("user", $user);
     }
 
-    public function voters()
-    {
-        if ($this->request->isPost() && CSRF::post()) {
-            $users = Votes::getUsers();
-            $userArr = [];
+public function voters()
+{
+    if ($this->request->isPost() && CSRF::post()) {
+        $users = Votes::getUsers();
+        $userArr = [];
 
-            // groups users and counts votes, and uses most recent ip. Faster and less complex than a query.
-            foreach ($users as $user) {
-                if (in_array($user["username"], array_keys($userArr))) {
-                    $in_arr = $userArr[$user["username"]];
-                    if ($in_arr[3] < $user["started_on"]) {
-                        $userArr[$user["username"]][2] = $user["ip_address"];
-                        $userArr[$user["username"]][1] += $user["total"];
-                    }
-                } else {
-                    $user["started_on"] = date(
-                        "d.m.Y g:i A",
-                        $user["started_on"]
-                    );
-                    $userArr[$user["username"]] = array_values($user);
+        // Group users case-insensitively, preserve original casing for display
+        foreach ($users as $user) {
+            $key = strtolower($user["username"]); // normalized key
+            $displayName = $user["username"];     // original casing
+
+            if (isset($userArr[$key])) {
+                // Add to vote count
+                $userArr[$key][1] += $user["total"];
+
+                // Update IP and timestamp if newer
+                if (strtotime($userArr[$key][3]) < $user["started_on"]) {
+                    $userArr[$key][2] = $user["ip_address"];
+                    $userArr[$key][3] = date("m/d/Y g:i A", $user["started_on"]);
+                    $userArr[$key][0] = $displayName; // update display name to latest casing
                 }
+            } else {
+                // Initialize row: [Name, Votes, IP, Last Vote]
+                $userArr[$key] = [
+                    $displayName,
+                    $user["total"],
+                    $user["ip_address"],
+                    date("m/d/Y g:i A", $user["started_on"])
+                ];
             }
-
-            return ["data" => array_values($userArr)];
         }
 
-        $this->set("csrf_token", CSRF::token());
-        return true;
+        return ["data" => array_values($userArr)];
     }
+
+    $this->set("csrf_token", CSRF::token());
+    return true;
+}
 
     public function votes()
     {

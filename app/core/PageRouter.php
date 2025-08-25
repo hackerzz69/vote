@@ -2,18 +2,20 @@
 
 use Rammewerk\Router\Router;
 
-class PageRouter extends Router {
+class PageRouter extends Router
+{
+    private static ?PageRouter $instance = null;
 
-    private static $instance;
-
-    public static function getInstance(): self {
+    public static function getInstance(): self
+    {
         if (!self::$instance) {
             self::$instance = new PageRouter(fn(string $class) => new $class());
         }
         return self::$instance;
     }
 
-    public function __construct(?Closure $container = null) {
+    public function __construct(?Closure $container = null)
+    {
         parent::__construct($container);
     }
 
@@ -24,7 +26,8 @@ class PageRouter extends Router {
 
     public array $route_paths = [];
 
-    public function initRoutes(): void {
+    public function initRoutes(): void
+    {
         $this->add('', fn() => $this->setRoute('index', 'index'));
         $this->add('callback', fn() => $this->setRoute('index', 'callback'));
         $this->add('vote/([0-9]+)', fn(...$args) => $this->setRoute('index', 'vote', ['id' => $args[0]]));
@@ -55,11 +58,12 @@ class PageRouter extends Router {
         $this->add('admin/users/delete/([0-9]+)', fn(...$args) => $this->setRoute('users', 'delete', ['id' => $args[0]]));
 
         foreach ($this->routes as $pattern => $route) {
-            error_log("📌 Registered route: " . $pattern);
+            error_log("📌 Registered route: $pattern");
         }
     }
 
-    public function dispatch(?string $path = null, object|null $serverRequest = null): mixed {
+    public function dispatch(?string $path = null, ?object $serverRequest = null): mixed
+    {
         $this->path = trim($path ?? $this->getUriPath(), '/ ');
         error_log("🔍 Dispatching path: '{$this->path}'");
 
@@ -89,7 +93,7 @@ class PageRouter extends Router {
             foreach ($this->routes as $pattern => $candidate) {
                 $regex = '#^' . $pattern . '$#';
                 if (preg_match($regex, $this->path, $matches)) {
-                    error_log("🔧 Regex fallback matched: {$pattern}");
+                    error_log("🔧 Regex fallback matched: $pattern");
                     array_shift($matches);
                     $args = $matches;
                     $route = $candidate;
@@ -120,45 +124,53 @@ class PageRouter extends Router {
             $route = $method->invoke($this, $route);
         }
 
-        $handlerFactory = $route->factory ?? throw new \Rammewerk\Router\Error\InvalidRoute("Unable to handle route for: '{$this->path}'");
+        $handlerFactory = $route->factory
+            ?? throw new \Rammewerk\Router\Error\InvalidRoute("Unable to handle route for: '{$this->path}'");
 
         return $route->middleware
             ? $this->runPipeline(
                 $this->createMiddlewareFactories($route->middleware),
-                static fn(object|null $serverRequest) => $handlerFactory($args, $serverRequest),
+                static fn(?object $serverRequest) => $handlerFactory($args, $serverRequest),
                 $serverRequest
             )
             : $handlerFactory($args, $serverRequest);
     }
 
-    public function setRoute(string $controller, string $method, array $params = []): array {
+    public function setRoute(string $controller, string $method, array $params = []): array
+    {
         $this->controller = $controller;
         $this->method = $method;
         $this->params = $params;
         return [$controller, $method, $params];
     }
 
-    public function getController(bool $formatted = false): string {
+    public function getController(bool $formatted = false): string
+    {
         return $formatted ? ucfirst($this->controller) . 'Controller' : $this->controller;
     }
 
-    public function getViewPath(): string {
+    public function getViewPath(): string
+    {
         return $this->getController() . '/' . $this->getMethod();
     }
 
-    public function getMethod(): string {
+    public function getMethod(): string
+    {
         return $this->method;
     }
 
-    public function getParams(): array {
+    public function getParams(): array
+    {
         return $this->params;
     }
 
-    public function isSecure(): bool {
+    public function isSecure(): bool
+    {
         return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443;
     }
 
-    public function getUrl(): string {
+    public function getUrl(): string
+    {
         $baseUrl = 'http' . ($this->isSecure() ? 's' : '') . '://' . $_SERVER['HTTP_HOST'];
         return $baseUrl . web_root;
     }

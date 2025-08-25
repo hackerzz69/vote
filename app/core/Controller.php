@@ -6,7 +6,7 @@ use Phalcon\Db\Index;
 
 class Controller {
 
-	protected $view;
+    protected $view;
     protected $viewVars = array();
     protected $actionName;
 
@@ -16,75 +16,75 @@ class Controller {
     /** @var PageRouter */
     protected $router;
 
-	/** @var Request $request */
-	protected $request;
+    /** @var Request $request */
+    protected $request;
 
-	/** @var Security $security */
-	protected $security;
+    /** @var Security $security */
+    protected $security;
 
-	/** @var Cookies $cookies */
-	protected $cookies;
+    /** @var Cookies $cookies */
+    protected $cookies;
 
     /**
      * Gets the name of the action
      * @return mixed
      */
-	public function getActionName() {
-		return $this->actionName;
-	}
+    public function getActionName() {
+        return $this->actionName;
+    }
 
     /**
      * Sets the action to be used.
      * @param $name
      */
-	public function setActionName($name) {
-		$this->actionName = $name;
-	}
+    public function setActionName($name) {
+        $this->actionName = $name;
+    }
 
     /**
      * Sets a specific variable for the view with a value
      * @param $variableName
      * @param $value
      */
-	public function set($variableName, $value) {
-		$this->viewVars[$variableName] = $value;
-	}
+    public function set($variableName, $value) {
+        $this->viewVars[$variableName] = $value;
+    }
 
     /**
      * Sets variables to be used in the view
      * @param $params
      */
-	public function setVars($params) {
-		$this->viewVars = $params;
-	}
+    public function setVars($params) {
+        $this->viewVars = $params;
+    }
 
     /**
      * Displays the necessary template using Twig
      */
-	public function show() {
-	    if ($this->disableView) {
-	        return;
+    public function show() {
+        if ($this->disableView) {
+            return;
         }
 
-	    $loader = new Template('app/views');
+        $loader = new Template('app/views');
         $loader->setCacheEnabled(false);
 
-	    try {
+        try {
             $template = $loader->load($this->view);
             echo $template->render($this->viewVars);
         } catch (Exception $e) {
-            
+            // Optional: log or display error
         }
-	}
+    }
 
     /**
      * Sets which view to use.
      * @param $view
      */
-	public function setView($view) {
-		$this->view = $view;
+    public function setView($view) {
+        $this->view = $view;
     }
-    
+
     public function getView() {
         return $this->view;
     }
@@ -92,18 +92,20 @@ class Controller {
     /**
      * @param $router PageRouter
      */
-	public function setRouter(PageRouter $router) {
-	    $this->router = $router;
+    public function setRouter(PageRouter $router) {
+        $this->router = $router;
     }
 
     /**
-     * Filters a string.
+     * Filters a string (PHP 8.1+ safe)
+     * Removes HTML tags and strips low/high ASCII
      * @param $str
-     * @return mixed
+     * @return string
      */
     public function filter($str) {
-        return filter_var($str, FILTER_SANITIZE_STRING,
-            FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
+        $str = strip_tags($str);
+        $str = preg_replace('/[\x00-\x1F\x7F-\x9F]/u', '', $str);
+        return trim($str);
     }
 
     /**
@@ -130,11 +132,11 @@ class Controller {
     }
 
     public static function debug($array) {
-        echo "<pre>".json_encode($array, JSON_PRETTY_PRINT)."</pre>";
+        echo "<pre>" . json_encode($array, JSON_PRETTY_PRINT) . "</pre>";
     }
 
     public static function printStr($str) {
-        echo "<pre>".$str."</pre>";
+        echo "<pre>" . $str . "</pre>";
     }
 
     public function disableView($is_json = false) {
@@ -165,5 +167,4 @@ class Controller {
     public function delayedRedirect($url, $time, $internal = false) {
         $this->request->delayedRedirect($url, $time, $internal);
     }
-
 }

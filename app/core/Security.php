@@ -1,39 +1,40 @@
 <?php
+
 use Fox\Cookies;
 use Fox\Request;
-use Router\Route;
-use Router\Router;
 
-class Security {
-
-    private static $instance;
+class Security
+{
+    private static ?Security $instance = null;
 
     /**
-     * @param $controller
+     * @param Controller $controller
      * @return Security
      */
-    public static function getInstance($controller) {
+    public static function getInstance(Controller $controller): self
+    {
         if (!self::$instance) {
             self::$instance = new Security($controller);
         }
         return self::$instance;
     }
 
-    private $is_root;
-    private $user;
-    private $controller;
-    private $cookies;
-    private $router;
-    private $request;
+    private bool $is_root = false;
+    private ?array $user = null;
+    private Controller $controller;
+    private Cookies $cookies;
+    private PageRouter $router;
+    private Request $request;
 
     /**
      * Security constructor.
      * @param Controller $controller
      */
-    public function __construct(Controller $controller) {
+    public function __construct(Controller $controller)
+    {
         $this->controller = $controller;
         $this->cookies    = $controller->getCookies();
-        $this->router     = $controller->getRouter();
+        $this->router     = $controller->getRouter(); // ✅ PageRouter instance
         $this->request    = $controller->getRequest();
     }
 
@@ -41,9 +42,10 @@ class Security {
      * Verifies if a user has access to certain pages.
      * @return bool
      */
-    public function checkAccess() {
-        $user_key   = $this->cookies->get("user_key");
-        $root_key   = $this->cookies->get("access_key");
+    public function checkAccess(): bool
+    {
+        $user_key = $this->cookies->get("user_key");
+        $root_key = $this->cookies->get("access_key");
 
         $controller = $this->router->getController();
         $action     = $this->router->getMethod();
@@ -53,13 +55,11 @@ class Security {
             'api'   => ['users', 'votes'],
         ];
 
-        if (in_array($controller, array_keys($omit))) {
-            if (in_array($action, $omit[$controller])) {
-                return true;
-            }
+        if (isset($omit[$controller]) && in_array($action, $omit[$controller])) {
+            return true;
         }
 
-        if (!$user_key && !$root_key && $controller != 'login') {
+        if (!$user_key && !$root_key && $controller !== 'login') {
             $this->controller->redirect("admin/login");
             exit;
         }
@@ -69,20 +69,13 @@ class Security {
             exit;
         }
 
-        $this->is_root = $root_key != null;
-        $is_user = $user_key != null;
+        $this->is_root = $root_key !== null;
+        $is_user = $user_key !== null;
 
         if ($is_user) {
             $session = UsersSessions::getSession($user_key);
 
-            if (!$session) {
-                $this->logout();
-                exit;
-            }
-
-            $ip_address = $this->request->getAddress();
-
-            if ($ip_address != $session['ip_address']) {
+            if (!$session || $this->request->getAddress() !== $session['ip_address']) {
                 $this->logout();
                 exit;
             }
@@ -94,19 +87,15 @@ class Security {
                 exit;
             }
 
-            $scopes = json_decode($user['scopes'], true);
+            $scopes = json_decode($user['scopes'] ?? '{}', true);
 
-            if (in_array($controller, array_keys($scopes))) {
-                $actions = $scopes[$controller];
-
-                if (!in_array($action, $actions)) {
-                    return false;
-                }
+            if (isset($scopes[$controller]) && !in_array($action, $scopes[$controller])) {
+                return false;
             }
 
             $this->user = $user;
             $this->controller->set("username", $user['username']);
-        } else if ($this->is_root) {
+        } elseif ($this->is_root) {
             $hash = $this->cookies->get("access_key");
 
             if (!password_verify(admin_password, $hash) || disable_root) {
@@ -120,7 +109,7 @@ class Security {
         }
 
         if ($this->user) {
-            if ($controller == "login") {
+            if ($controller === "login") {
                 $this->request->redirect("admin");
                 exit;
             }
@@ -129,20 +118,16 @@ class Security {
             $this->controller->set("action", $action);
             $this->controller->set("controller", $controller);
             return true;
-        } else {
-            if ($controller == "login") {
-                return true;
-            }
         }
 
-        return false;
+        return $controller === "login";
     }
 
-    public function logout() {
+    public function logout(): void
+    {
         if ($this->cookies->has("user_key")) {
-            $user_key = $this->cookies->get('user_key');
+            $user_key = $this->cookies->get("user_key");
             $this->cookies->delete("user_key");
-
             UsersSessions::deleteSession($user_key);
         }
 
@@ -150,11 +135,13 @@ class Security {
         $this->request->redirect("admin/login");
     }
 
-    public function getUser() {
+    public function getUser(): ?array
+    {
         return $this->user;
     }
 
-    public function isRoot() {
+    public function isRoot(): bool
+    {
         return $this->is_root;
     }
 }
